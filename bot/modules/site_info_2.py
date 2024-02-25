@@ -20,7 +20,7 @@ async def save_note(client, message):
         return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
 
     if message.reply_to_message:
-        site_info = message.reply_to_message.text.strip()
+        site_info = message.reply_to_message.text
     else:
         return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
 
