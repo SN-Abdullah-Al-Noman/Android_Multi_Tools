@@ -16,7 +16,7 @@ async def save_note(client, message):
 
     client = MongoClient(DATABASE_URL)
     db = client.grameenphone
-    collection = client.grameenphone_site_info
+    collection = db.grameenphone_site_info
     note_name = message.text.split(maxsplit=1)
     if len(note_name) < 2:
         await message.reply("Please provide a note name.")
