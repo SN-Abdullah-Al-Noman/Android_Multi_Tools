@@ -28,4 +28,4 @@ async def save_note(client, message):
     db = conn.mltb
     collection = db.gp_site_info
     collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
-    await message.reply(f"{site_code} site information added in database.")
+    await message.reply(f"<b>{site_code}</b> site information added in database.")
