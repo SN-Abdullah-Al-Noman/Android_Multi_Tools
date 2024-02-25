@@ -19,6 +19,9 @@ async def save_note(client, message):
     else:
         return await message.reply("Please reply anything with command to save it.")
 
+    if not message.reply_to_message:
+        return await message.reply("Please reply anything with command to save it.\n\n<b>Usage</b> /save note_name")
+    
     site_info = message.reply_to_message.text.strip()
 
     conn = MongoClient(DATABASE_URL)
