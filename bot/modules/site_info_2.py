@@ -27,8 +27,7 @@ async def save_note(client, message):
         site_photo = await message.reply_to_message.download()
         site_info = message.caption
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': site_photo}}, upsert=True)
-    elif:
-        message.reply_to_message.text
+    elif message.reply_to_message.text
         site_info = message.reply_to_message.text
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
     else:
