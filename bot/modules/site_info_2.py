@@ -13,8 +13,11 @@ async def save_note(client, message):
     if not DATABASE_URL:
         return await message.reply("No database added.")
 
+    args = message.text.split()
+    if len(args) > 1:
+        site_code = args[1]
+    
     site_info2 = message.reply_to_message
-    site_code = "Bgcheck1"
     site_info = "Hoye geche"
     conn = MongoClient(DATABASE_URL)
     db = conn.mltb
