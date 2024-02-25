@@ -14,7 +14,10 @@ async def save_note(client, message):
     if not DATABASE_URL:
         return await message.reply("No database added.")
 
-    client = MongoClient(DATABASE_URL)
-    db = client["GP_FULL"]
-    collection = db["gp_site_info"]
-    
+    conn = MongoClient(DATABASE_URL)
+    db = conn.mltb
+    collection = db.gp_site_info
+    collection.update_one(
+                {'BGCOS1': BGCOS1},
+                {'$set': {'Full_Name': Bagerhat_Costal_1}},
+                upsert=True)
