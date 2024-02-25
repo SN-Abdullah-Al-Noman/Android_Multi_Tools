@@ -17,8 +17,7 @@ async def save_note(client, message):
     if len(args) > 1:
         site_code = args[1]
     
-    site_info2 = message.reply_to_message
-    site_info = "Hoye geche"
+    site_info = message.reply_to_message
     conn = MongoClient(DATABASE_URL)
     db = conn.mltb
     collection = db.gp_site_info
