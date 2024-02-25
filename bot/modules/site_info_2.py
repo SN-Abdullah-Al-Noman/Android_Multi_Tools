@@ -16,9 +16,11 @@ async def save_note(client, message):
     args = message.text.split()
     if len(args) > 1:
         site_code = args[1]
+    else:
+        return await message.reply("Please reply anything with command to save it.")
 
     site_info = message.reply_to_message.text.strip()
-    
+
     conn = MongoClient(DATABASE_URL)
     db = conn.mltb
     collection = db.gp_site_info
