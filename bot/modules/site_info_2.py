@@ -14,16 +14,14 @@ async def save_note(client, message):
         return await message.reply("No database added.")
 
     replied_msg = message.reply_to_message
-    note_name, main_note = replied_msg.text.split()
+    site_code, site_info = replied_msg.text.split()
     await message.reply(f"{note_name} {main_note}")
-    
-    site_code = "BGCOS1"
-    info = "Bagerhat Costal 1"
+
     conn = MongoClient(DATABASE_URL)
     db = conn.mltb
     collection = db.gp_site_info
     collection.update_one(
                 {'site_code': site_code},
-                {'$set': {'info': info}},
+                {'$set': {'site_info': site_info}},
                 upsert=True)
         
