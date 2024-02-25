@@ -14,6 +14,7 @@ async def save_note(client, message):
     if not DATABASE_URL:
         return await message.reply("No database added.")
 
+    client = MongoClient(DATABASE_URL)
     db = client["GP_FULL"]
     collection = db["gp_site_info"]
     
