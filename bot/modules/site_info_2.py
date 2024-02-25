@@ -28,8 +28,8 @@ async def save_note(client, message):
     db = conn.mltb
     collection = db.gp_site_info
 
-    if message.reply_to_message.photo:
-        site_photo = await message.download()
+    if message.reply_to_message:
+        site_photo = await message.reply_to_message.download()
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': site_photo}}, upsert=True)
     else:
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
