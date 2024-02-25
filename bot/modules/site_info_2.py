@@ -15,7 +15,7 @@ async def save_note(client, message):
 
     replied_msg = message.reply_to_message
     note_name, main_note = replied_msg.text.split()
-    await message.reply(f"{note_name} {main_}")
+    await message.reply(f"{note_name} {main_note}")
     
     site_code = "BGCOS1"
     info = "Bagerhat Costal 1"
