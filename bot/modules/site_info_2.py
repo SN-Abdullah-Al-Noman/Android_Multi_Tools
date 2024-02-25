@@ -19,19 +19,19 @@ async def save_note(client, message):
     else:
         return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
 
-    if message.reply_to_message:
-        site_info = message.reply_to_message.text
-    else:
-        return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
-
     conn = MongoClient(DATABASE_URL)
     db = conn.mltb
     collection = db.gp_site_info
 
-    if message.reply_to_message:
+    if message.reply_to_message.photo:
         site_photo = await message.reply_to_message.download()
+        site_info = message.caption
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': site_photo}}, upsert=True)
-    else:
+    elif:
+        message.reply_to_message.text
+        site_info = message.reply_to_message.text
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
-    
+    else:
+        return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
+
     await message.reply(f"<b>{site_code}</b> site information added in database.")
