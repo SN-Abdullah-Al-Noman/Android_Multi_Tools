@@ -17,10 +17,10 @@ async def save_note(client, message):
     if len(args) > 1:
         site_code = args[1]
     else:
-        return await message.reply("Please reply anything with command to save it.")
+        return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
 
     if not message.reply_to_message:
-        return await message.reply("Please reply anything with command to save it.\n\n<b>Usage</b> /save note_name")
+        return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
     
     site_info = message.reply_to_message.text.strip()
 
@@ -28,3 +28,4 @@ async def save_note(client, message):
     db = conn.mltb
     collection = db.gp_site_info
     collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
+    await message.reply(f"{site_code} information added in database.")
