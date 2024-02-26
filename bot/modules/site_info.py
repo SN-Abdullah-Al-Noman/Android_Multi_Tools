@@ -61,9 +61,9 @@ async def get_note(client, message):
         response += f"<b>Site Info:</b> {site_info.get('site_info', 'N/A')}\n"
         if 'site_photo' in site_info:
             decoded_data = b64decode(site_info['site_photo'])
-            with open(f"site_code", 'wb') as f:
-                f.write(decoded_data)
-            await message.reply_photo(f, caption=response)
+            with open(f"{site_code}.jpg", 'wb') as image:
+                image.write(decoded_data)
+            await message.reply_photo(image, caption=response)
         else:
             await message.reply(response)
     else:
