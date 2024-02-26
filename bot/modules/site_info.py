@@ -25,12 +25,12 @@ async def save_note(client, message):
     collection = db.gp_site_info
 
     if message.reply_to_message.photo:
-        site_info = message.reply_to_message.caption
-        site_photo = f"site_photos/{site_code}.jpg"
-        await message.reply_to_message.download(site_photo)
-        with open(f"site_photo", "rb") as image_file:
-            encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
-            collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': encoded_image}}, upsert=True)
+    site_info = message.reply_to_message.caption
+    site_photo = f"site_photos/{site_code}.jpg"
+    await message.reply_to_message.download(site_photo)
+    with open(site_photo, "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+        collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': encoded_image}}, upsert=True)
     elif message.reply_to_message.text:
         site_info = message.reply_to_message.text
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
