@@ -68,4 +68,4 @@ async def get_note(client, message):
         else:
             await message.reply(response)
     else:
-        await message.reply(f"<b>{site_code}</b> Site's information not found. Because it's not added.")
+        await message.reply(f"<b>{site_code}</b> Site's information not found. Because it's not added yet.")
