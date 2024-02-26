@@ -10,7 +10,7 @@ DATABASE_URL = "mongodb+srv://Atrocious-Robot:Cjka8UGjoN1Nj9gB@atrocious-robot.2
 
 
 @bot.on_message(command("save"))
-async def save_note(client, message):
+async def save_site_info(client, message):
     if not DATABASE_URL:
         return await message.reply("No database added.")
 
@@ -41,7 +41,7 @@ async def save_note(client, message):
 
 
 @bot.on_message(command("info"))
-async def get_note(client, message):
+async def get_site_info(client, message):
     if not DATABASE_URL:
         return await message.reply("No database added.")
 
@@ -88,3 +88,25 @@ async def list_sites(client, message):
         await message.reply(response)
     else:
         await message.reply("No site's info added in database.")
+
+
+@bot.on_message(command("delete"))
+async def delete_site_info(client, message):
+    if not DATABASE_URL:
+        return await message.reply("No database added.")
+
+    args = message.text.split()
+    if len(args) > 1:
+        site_code = args[1]
+    else:
+        return await message.reply("Please provide site code after command.\n\n<b>Usage:</b> /delete site_code")
+
+    conn = MongoClient(DATABASE_URL)
+    db = conn.mltb
+    collection = db.gp_site_info
+
+    if collection.find_one({'site_code': site_code}):
+        collection.delete_one({'site_code': site_code})
+        await message.reply(f"Site information for <b>{site_code}</b> has been successfully deleted.")
+    else:
+        await message.reply(f"No information found for site code <b>{site_code}</b>.")
