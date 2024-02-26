@@ -59,6 +59,10 @@ async def get_note(client, message):
     if site_info:
         response = f"<b>Site Code:</b> {site_info['site_code']}\n"
         response += f"<b>Site Info:</b> {site_info.get('site_info', 'N/A')}\n"
-        await message.reply(response)
+        if 'site_photo' in site_info:
+            site_photo = b64decode(site_info['site_photo'])
+            await message.reply_photo(site_photo, caption=response)
+        else:
+            await message.reply(response)
     else:
-        await message.reply("Site information not found.")
+        await message.reply(f"<b>{site_code}</b> Site's information not found. Because it's not added.")
