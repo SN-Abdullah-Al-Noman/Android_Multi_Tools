@@ -82,7 +82,7 @@ async def list_sites(client, message):
     site_codes = collection.distinct("site_code")
 
     if site_codes:
-        response = "<b>Site Serial:</b> <b>Site Code:</b>\n"
+        response = "<b>Serial:</b> <b>Site Code:</b>\n"
         for idx, site_code in enumerate(site_codes, start=1):
             response += f"{idx:02} : {site_code}\n"
         await message.reply(response)
