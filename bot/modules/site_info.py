@@ -54,3 +54,15 @@ async def get_note(client, message):
     conn = MongoClient(DATABASE_URL)
     db = conn.mltb
     collection = db.gp_site_info
+    site_info = collection.find_one({'site_code': site_code})
+
+    if site_info:
+        response = f"<b>Site Code:</b> {site_info['site_code']}\n"
+        response += f"<b>Site Info:</b> {site_info.get('site_info', 'N/A')}\n"
+        if 'site_photo' in site_info:
+            decoded_image = b64decode(site_info['site_photo'])
+            await message.reply_photo(decoded_image, caption=response)
+        else:
+            await message.reply(response)
+    else:
+        await message.reply("Site information not found.")
