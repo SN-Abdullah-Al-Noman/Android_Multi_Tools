@@ -39,5 +39,5 @@ async def save_note(client, message):
 @bot.on_message(command("get"))
 async def get_text(client, message):
     if message.caption:
-        text = message.caption.split()
+        text = message.caption
         await message.reply("Here is extracted text {text}.")
