@@ -38,3 +38,19 @@ async def save_note(client, message):
         return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
 
     await message.reply(f"<b>{site_code}</b> site information added in database.")
+
+
+@bot.on_message(command("info"))
+async def get_note(client, message):
+    if not DATABASE_URL:
+        return await message.reply("No database added.")
+
+    args = message.text.split()
+    if len(args) > 1:
+        site_code = args[1]
+    else:
+        return await message.reply("Please provide site code after command.\n\n<b>Usage:</b> /info site_code")
+
+    conn = MongoClient(DATABASE_URL)
+    db = conn.mltb
+    collection = db.gp_site_info
