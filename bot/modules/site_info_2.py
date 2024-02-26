@@ -34,9 +34,3 @@ async def save_note(client, message):
         return await message.reply("Please reply anything with command to save it.\n\n<b>Usage:</b> /save note_name")
 
     await message.reply(f"<b>{site_code}</b> site information added in database.")
-
-
-@bot.on_message(command("get"))
-async def get_text(client, message):
-    text = message.caption
-    await message.reply("Here is extracted text {text}.")
