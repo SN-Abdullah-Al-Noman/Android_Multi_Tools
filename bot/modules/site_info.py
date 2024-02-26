@@ -29,8 +29,8 @@ async def save_note(client, message):
         site_photo = f"site_photos/{site_code}.jpg"
         await message.reply_to_message.download(site_photo)
         with open(site_photo, "rb") as image_file:
-            site_photo = base64.b64encode(image_file.read())
-            collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': site_photo}}, upsert=True)
+            encoded_image = base64.b64encode(image_file.read())
+            collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': encoded_image}}, upsert=True)
     elif message.reply_to_message.text:
         site_info = message.reply_to_message.text
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
