@@ -84,7 +84,7 @@ async def list_sites(client, message):
     if site_codes:
         response = "<b>Serial:</b> <b>Site Code:</b>\n"
         for idx, site_code in enumerate(site_codes, start=1):
-            response += f"{idx:02} : {site_code}\n"
+            response += f"{idx:02} : <code>{site_code}</code>\n"
         await message.reply(response)
     else:
         await message.reply("No site's info added in database.")
