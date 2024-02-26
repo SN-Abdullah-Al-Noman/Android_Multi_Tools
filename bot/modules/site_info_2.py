@@ -38,23 +38,6 @@ async def save_note(client, message):
 
 @bot.on_message(command("get"))
 async def get_text(client, message):
-    if message.text:
-        split_text = message.text.split(maxsplit=1)
-        if len(split_text) > 1:
-            text = split_text[1]
-        else:
-            await message.reply("Please provide some text to search.")
-            return
-    elif message.caption:
-        split_caption = message.caption.split(maxsplit=1)
-        if len(split_caption) > 1:
-            text = split_caption[1]
-        else:
-            await message.reply("Please provide some text to search.")
-            return
-    else:
-        await message.reply("Please provide some text to search.")
-        return
-
-    await message.reply(f"Searching for: {text}")
-
+    if message.caption:
+        text = message.caption.split()
+        await message.reply("Here is extracted text {text}.")
