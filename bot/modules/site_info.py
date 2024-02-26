@@ -1,3 +1,4 @@
+import base64
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
 from pymongo import MongoClient
@@ -26,7 +27,9 @@ async def save_note(client, message):
     if message.reply_to_message.photo:
         site_info = message.reply_to_message.caption
         site_photo = await message.reply_to_message.download()
-        collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': site_photo}}, upsert=True)
+        with open(site_photo, "rb") as image_file:
+            site_photo = base64.b64encode(image_file.read())
+            collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info, 'site_photo': site_photo}}, upsert=True)
     elif message.reply_to_message.text:
         site_info = message.reply_to_message.text
         collection.update_one({'site_code': site_code}, {'$set': {'site_info': site_info}}, upsert=True)
