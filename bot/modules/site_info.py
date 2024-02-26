@@ -69,3 +69,22 @@ async def get_note(client, message):
             await message.reply(response)
     else:
         await message.reply(f"<b>{site_code}</b> Site's information not found. Because it's not added yet.")
+
+
+@bot.on_message(command("sites"))
+async def list_sites(client, message):
+    if not DATABASE_URL:
+        return await message.reply("No database added.")
+
+    conn = MongoClient(DATABASE_URL)
+    db = conn.mltb
+    collection = db.gp_site_info
+    site_codes = collection.distinct("site_code")
+
+    if site_codes:
+        response = "<b>Site Serial:</b> <b>Site Code:</b>\n"
+        for idx, site_code in enumerate(site_codes, start=1):
+            response += f"{idx:02} : {site_code}\n"
+        await message.reply(response, parse_mode="HTML")
+    else:
+        await message.reply("No site's info added in database.")
