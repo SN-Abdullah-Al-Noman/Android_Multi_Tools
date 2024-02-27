@@ -23,7 +23,8 @@ async def check_sites(client, message):
     non_ag_sites = []
     if message.reply_to_message:
         msg = message.reply_to_message.text.split('\n')
-        sites = msg[1:]
+        sites = '\n'.join(msg[1:])
+        for site in sites.strip().split('\n'):
     
     if not sites:
         return await message.reply(f"Please reply to any xsite alarm")
