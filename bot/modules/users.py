@@ -25,9 +25,8 @@ async def check_sites(client, message):
         msg = message.reply_to_message.text.split('\n')
         sites = '\n'.join(msg[1:])
         for site in sites.strip().split('\n'):
-    
-    if not sites:
-        return await message.reply(f"Please reply to any xsite alarm")
+            if not sites:
+                return await message.reply(f"Please reply to any xsite alarm")
 
     ag_sites_list = []
     for site in sites.strip().split('\n'):
