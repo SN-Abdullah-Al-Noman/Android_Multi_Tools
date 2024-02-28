@@ -1,6 +1,6 @@
-from os import path as ospath, remove as osremove, execl as osexecl
 from sys import executable
 from subprocess import run as srun
+from os import path as ospath, remove as osremove, execl as osexecl
 
 from pyrogram import filters
 from pyrogram.handlers import MessageHandler
@@ -27,9 +27,7 @@ async def restart(client, message):
         
 
 
-@bot.on_message()
 async def check_sites(client, message):
-    await restart(client, message)
     ag_sites_list = []
     non_ag_sites = []
     msg = message.text
@@ -54,3 +52,9 @@ async def check_sites(client, message):
     non_ag_sites_str = '\n'.join(non_ag_sites)
     if non_ag_sites_str:
         await message.reply(f"<b>Non Generator Sites:\nSites:      Time:    Types:    Links:</b>\n{non_ag_sites_str}")
+
+
+@bot.on_message()
+async def check_sites(client, message):
+    await restart(client, message)
+    await check_sites(client, message)
