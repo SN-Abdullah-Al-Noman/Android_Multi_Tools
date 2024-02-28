@@ -12,26 +12,31 @@ async def editMessage(message, text):
         print(f"An error occurred: {e}")
 
 
-
-ag_sites = """
+AG_SITES = """
 BGCOS1
 BGDBL1
 BGDBH1
 """
 
+
+@bot.on_message()
 async def check_sites(client, message):
     non_ag_sites = []
-    if message.reply_to_message:
-        msg = message.reply_to_message.text.split('\n')
+    if not message.text.startswith("HS MF KHE:"):
+        return
+
+    if message.text.startswith("HS MF KHE"):
+        msg = message.text.split('\n')
         sites = '\n'.join(msg[1:])
-        for site in sites.strip().split('\n'):
-            if not sites:
-                return await message.reply(f"Please reply to any xsite alarm")
 
     ag_sites_list = []
     for site in sites.strip().split('\n'):
         site_code = site.split('(')[0].strip()
-        if site_code in ag_sites.strip().split('\n'):
+        if site_code in AG_SITES.strip().split('\n'):
+            if site_code == "BGCOS1":
+                site += f" <b>A</b> Class. <b>170</b> Links."
+            elif site_code == "BGDBL1":
+                site += " Additional info for BGDBL1"
             ag_sites_list.append(site)
         else:
             non_ag_sites.append(site)
@@ -43,6 +48,3 @@ async def check_sites(client, message):
     non_ag_sites_str = '\n'.join(non_ag_sites)
     if non_ag_sites_str:
         await message.reply(f"<b>Non Generator Sites:\nSites:      Time:</b>\n{non_ag_sites_str}")
-
-        
-bot.add_handler(MessageHandler(check_sites, filters=filters.command("s")))
