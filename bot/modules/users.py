@@ -1,3 +1,7 @@
+from os import path as ospath, remove as osremove, execl as osexecl
+from sys import executable
+from subprocess import run as srun
+
 from pyrogram import filters
 from pyrogram.handlers import MessageHandler
 
