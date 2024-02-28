@@ -21,15 +21,19 @@ BGDBH1
 
 @bot.on_message()
 async def check_sites(client, message):
-    non_ag_sites = []
-    if not message.text.startswith("HS MF KHE:"):
-        return
-
-    if message.text.startswith("HS MF KHE"):
-        msg = message.text.split('\n')
-        sites = '\n'.join(msg[1:])
-
     ag_sites_list = []
+    non_ag_sites = []
+    msg = message.text
+    
+    if msg.startswith("restart"):
+        restart_message = await sendMessage(message, "Restarting...")
+        srun(["python3", "update.py"])
+        await editMessage(restart_message, f"Bot Restarted.")
+        osexecl(executable, executable, "-m", "bot")
+
+    msg = msg.split('\n')
+    sites = '\n'.join(msg[1:])
+
     for site in sites.strip().split('\n'):
         site_code = site.split('(')[0].strip()
         if site_code in AG_SITES.strip().split('\n'):
