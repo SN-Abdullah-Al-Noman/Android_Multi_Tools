@@ -7,6 +7,7 @@ from pyrogram.handlers import MessageHandler
 
 from bot import bot
 from bot.helper.telegram_helper.filters import CustomFilters
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
 
 
 async def editMessage(message, text):
