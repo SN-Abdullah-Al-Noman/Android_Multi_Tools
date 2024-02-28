@@ -160,6 +160,6 @@ async def delete_site_info(client, message):
 
 
 @bot.on_message()
-async def check_sites(client, message):
+async def check_command(client, message):
     await restart(client, message)
     await check_sites(client, message)
