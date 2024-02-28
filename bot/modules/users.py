@@ -20,12 +20,12 @@ BGDBH1
 
 DATABASE_URL = "mongodb+srv://Atrocious-Robot:Cjka8UGjoN1Nj9gB@atrocious-robot.2quemf3.mongodb.net/?retryWrites=true&w=majority"
 
+
 async def restart(client, message):
-    if message.text.startswith("restart"):
-        restart_message = await sendMessage(message, "Restarting...")
-        srun(["python3", "update.py"])
-        await editMessage(restart_message, f"Bot Restarted.")
-        osexecl(executable, executable, "-m", "bot")
+    restart_message = await sendMessage(message, "Restarting...")
+    srun(["python3", "update.py"])
+    await editMessage(restart_message, f"Bot Restarted.")
+    osexecl(executable, executable, "-m", "bot")
         
 
 async def check_sites(client, message):
@@ -118,11 +118,8 @@ async def get_site_info(client, message):
 
 
 async def site_list(client, message):
-    if message.text.startswith("sites"):
-        if not DATABASE_URL:
-            return await message.reply("No database added.")
-        else:
-            pass
+    if not DATABASE_URL:
+        return await message.reply("No database added.")
 
     conn = MongoClient(DATABASE_URL)
     db = conn.mltb
@@ -161,5 +158,10 @@ async def delete_site_info(client, message):
 
 @bot.on_message()
 async def check_command(client, message):
-    await restart(client, message)
-    await site_list(client, message)
+    if message.text.startswith("restart"):
+        await restart(client, message)
+    if message.text.startswith("sites"):
+        await site_list(client, message)
+    if message.text.startswith("delete"):
+        await delete_site_info(client, message)
+
