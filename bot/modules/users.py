@@ -23,10 +23,10 @@ BGCOS1 = f" <b>A</b> Class. <b>170</b> Links."
 @bot.on_message()
 async def check_sites(client, message):
     non_ag_sites = []
-    if not message.text.startswith("HS MF KHE:") or message.text.startswith("HS BATT KHE:") or message.text.startswith("HS DOWN KHE:") or message.text.startswith("HS GCELL KHE:") or message.text.startswith("HS UCELL KHE:") 
+    if not message.text.startswith("HS MF KHE:") or message.text.startswith("HS BATT KHE:") or message.text.startswith("HS DOWN KHE:") or message.text.startswith("HS GCELL KHE:") or message.text.startswith("HS UCELL KHE:"): 
         return
 
-    if message.text.startswith("HS MF KHE:") or message.text.startswith("HS BATT KHE:") or message.text.startswith("HS DOWN KHE:") or message.text.startswith("HS GCELL KHE:") or message.text.startswith("HS UCELL KHE:") 
+    if message.text.startswith("HS MF KHE:") or message.text.startswith("HS BATT KHE:") or message.text.startswith("HS DOWN KHE:") or message.text.startswith("HS GCELL KHE:") or message.text.startswith("HS UCELL KHE:"):
         msg = message.text.split('\n')
         sites = '\n'.join(msg[1:])
 
