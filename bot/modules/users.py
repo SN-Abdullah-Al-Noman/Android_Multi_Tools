@@ -10,34 +10,26 @@ from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
 
 
-async def editMessage(message, text):
-    try:
-        await message.edit(text=text)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-
 AG_SITES = """
 BGCOS1
 BGDBL1
 BGDBH1
 """
 
-BGCOS1 = f"  <b>A</b> Class. <b>170</b> Links."
 
-@bot.on_message()
-async def check_sites(client, message):
+async def restart(client, message):
     msg = message.text
-    
     if msg.startswith("restart"):
         restart_message = await sendMessage(message, "Restarting...")
         srun(["python3", "update.py"])
         await editMessage(restart_message, f"Bot Restarted.")
         osexecl(executable, executable, "-m", "bot")
+        
 
 
 @bot.on_message()
 async def check_sites(client, message):
+    await restart(client, message)
     ag_sites_list = []
     non_ag_sites = []
     msg = message.text
@@ -48,7 +40,7 @@ async def check_sites(client, message):
         site_code = site.split('(')[0].strip()
         if site_code in AG_SITES.strip().split('\n'):
             if site_code == "BGCOS1":
-                site += BGCOS1
+                site += f"  <b>A</b> Class. <b>170</b> Links."
             elif site_code == "BGDBL1":
                 site += " Additional info for BGDBL1"
             ag_sites_list.append(site)
@@ -57,7 +49,7 @@ async def check_sites(client, message):
 
     if ag_sites_list:
         ag_sites_str = '\n'.join(ag_sites_list)
-        await message.reply(f"<b>Auto Generator Sites.")
+        await message.reply(f"<b>Auto Generator Sites:\nSites:      Time:    Types:    Links:</b>\n{ag_sites_str}")
 
     non_ag_sites_str = '\n'.join(non_ag_sites)
     if non_ag_sites_str:
