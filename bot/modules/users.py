@@ -57,7 +57,7 @@ async def check_sites(client, message):
 
     if ag_sites_list:
         ag_sites_str = '\n'.join(ag_sites_list)
-        await message.reply(f"<b>Auto Generator Sites:\nSites:      Time:    Types:    Links:</b>\n{ag_sites_str}")
+        await message.reply(f"<b>Auto Generator Sites.")
 
     non_ag_sites_str = '\n'.join(non_ag_sites)
     if non_ag_sites_str:
