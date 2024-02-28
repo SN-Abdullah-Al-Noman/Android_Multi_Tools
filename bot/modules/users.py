@@ -23,6 +23,7 @@ BGDBL1
 BGDBH1
 """
 
+BGCOS1 = f"  <b>A</b> Class. <b>170</b> Links."
 
 @bot.on_message()
 async def check_sites(client, message):
@@ -47,7 +48,7 @@ async def check_sites(client, message):
         site_code = site.split('(')[0].strip()
         if site_code in AG_SITES.strip().split('\n'):
             if site_code == "BGCOS1":
-                site += f"  <b>A</b> Class. <b>170</b> Links."
+                site += BGCOS1
             elif site_code == "BGDBL1":
                 site += " Additional info for BGDBL1"
             ag_sites_list.append(site)
