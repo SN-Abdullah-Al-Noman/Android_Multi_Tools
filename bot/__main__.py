@@ -27,15 +27,6 @@ async def start(client, message):
     await DbManger().update_pm_users(message.from_user.id)
 
 
-@bot.on_message()
-async def restart(client, message):
-    if message.text.startswith("restart"):
-        restart_message = await sendMessage(message, "Restarting...")
-        srun(["python3", "update.py"])
-        await editMessage(restart_message, f"Bot Restarted.")
-        osexecl(executable, executable, "-m", "bot")
-
-
 @bot.on_message(filters.command("stop"))
 async def start(client, message):
     await message.reply_text(f"Stoping bot.")
