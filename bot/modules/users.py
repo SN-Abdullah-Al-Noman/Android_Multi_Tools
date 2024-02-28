@@ -43,7 +43,7 @@ async def check_sites(client, message):
         site_code = site.split('(')[0].strip()
         if site_code in AG_SITES.strip().split('\n'):
             if site_code == "BGCOS1":
-                site += f" <b>A</b> Class. <b>170</b> Links."
+                site += f"  <b>A</b> Class. <b>170</b> Links."
             elif site_code == "BGDBL1":
                 site += " Additional info for BGDBL1"
             ag_sites_list.append(site)
@@ -52,8 +52,8 @@ async def check_sites(client, message):
 
     if ag_sites_list:
         ag_sites_str = '\n'.join(ag_sites_list)
-        await message.reply(f"<b>Auto Generator Sites:\nSites:      Time:</b>  <b>Types:</b>  <b>Links</b>\n{ag_sites_str}")
+        await message.reply(f"<b>Auto Generator Sites:\nSites:      Time:    Types:    Links:</b>\n{ag_sites_str}")
 
     non_ag_sites_str = '\n'.join(non_ag_sites)
     if non_ag_sites_str:
-        await message.reply(f"<b>Non Generator Sites:\nSites:      Time:</b>\n{non_ag_sites_str}")
+        await message.reply(f"<b>Non Generator Sites:\nSites:      Time:    Types:    Links:</b>\n{non_ag_sites_str}")
