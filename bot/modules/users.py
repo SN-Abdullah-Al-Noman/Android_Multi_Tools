@@ -26,8 +26,6 @@ BGDBH1
 
 @bot.on_message()
 async def check_sites(client, message):
-    ag_sites_list = []
-    non_ag_sites = []
     msg = message.text
     
     if msg.startswith("restart"):
@@ -36,6 +34,12 @@ async def check_sites(client, message):
         await editMessage(restart_message, f"Bot Restarted.")
         osexecl(executable, executable, "-m", "bot")
 
+
+@bot.on_message()
+async def check_sites(client, message):
+    ag_sites_list = []
+    non_ag_sites = []
+    msg = message.text
     msg = msg.split('\n')
     sites = '\n'.join(msg[1:])
 
