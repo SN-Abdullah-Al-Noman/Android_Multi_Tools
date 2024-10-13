@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from tzlocal import get_localzone
 from pyrogram import Client as tgClient, enums
 from os import remove as osremove, path as ospath, environ
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig, error as log_error, info as log_info, warning as log_warning
 
 
@@ -94,3 +95,4 @@ log_info("Creating client from BOT_TOKEN")
 bot = tgClient('bot', TELEGRAM_API, TELEGRAM_HASH, bot_token=BOT_TOKEN, workers=1000, parse_mode=enums.ParseMode.HTML).start() 
 bot_loop = bot.loop 
 bot_name = bot.me.username 
+scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)
