@@ -17,9 +17,9 @@ from bot.helper.telegram_helper.filters import CustomFilters
 DOWNLOAD_DIR = "./f/"
 files_to_keep = ["boot.img.lz4", "super.img.lz4"]
 
+
 async def sendMessage(message, text):
     return await message.reply(text=text, quote=True)
-
 
 async def editMessage(message, text):
     try:
@@ -33,6 +33,28 @@ def new_task(func):
         return bot_loop.create_task(func(*args, **kwargs))
 
     return wrapper
+
+
+@new_task
+def upload_in_drive(file_name, file_path, DRIVE_FOLDER_ID):
+    credentials = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            credentials = pickle.load(token)
+
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
+        else:
+            raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
+
+    drive_service = build('drive', 'v3', credentials=credentials)
+    file_metadata = {'name': file_name, 'parents': [DRIVE_FOLDER_ID]}
+    desired_speed_mbps = 400
+    chunk_size = int(desired_speed_mbps * 1000000 / 8)
+    media_body = MediaIoBaseUpload(io.BytesIO(open(file_path, 'rb').read()), mimetype='application/octet-stream', resumable=True)
+    file = drive_service.files().create(body=file_metadata, media_body=media_body, supportsAllDrives=True, fields='id').execute()
+    print(f'File uploaded. File ID is: {file.get("id")}')
 
 
 @new_task
@@ -136,7 +158,8 @@ async def samsung_fw_extract(client, message):
 
     banner = f"\n{banner}\n<b>Step 8:</b> Uploading zip in google drive."
     await editMessage(status, banner)
-    banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is file link."
+    upload_in_drive(archive.zip, DOWNLOAD_DIR, DRIVE_FOLDER_ID)
+    banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is file link : {file.get("id")}"
     await editMessage(status, banner)
     subprocess.run("rm -rf *.zip", shell=True, cwd=DOWNLOAD_DIR)
 
