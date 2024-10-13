@@ -68,7 +68,7 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     try:
         subprocess.run('for file in *.tar; do tar -xvf "$file"; done', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('find . -type f ! -name 'super.img.lz4' ! -name 'optics.img.lz4' ! -name 'prism.img.lz4' ! -name 'boot.img.lz4' -delete', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run("find . -type f ! -name 'super.img.lz4' ! -name 'optics.img.lz4' ! -name 'prism.img.lz4' ! -name 'boot.img.lz4' -delete", shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf *.tar', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf meta-data', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
