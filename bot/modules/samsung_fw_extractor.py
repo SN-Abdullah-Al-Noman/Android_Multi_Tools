@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+from functools import wraps
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -9,7 +10,7 @@ from googleapiclient.http import MediaIoBaseUpload
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
 
-from bot import bot
+from bot import bot, bot_loop
 from bot.helper.telegram_helper.filters import CustomFilters
 
 
@@ -26,7 +27,15 @@ async def editMessage(message, text):
     except:
         pass
 
+def new_task(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return bot_loop.create_task(func(*args, **kwargs))
 
+    return wrapper
+
+
+@new_task
 async def samsung_fw_extract(client, message):
     args = message.text.split()
     link = args[1] if len(args) > 1 else ''
