@@ -10,7 +10,7 @@ from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.button_build import ButtonMaker
 from .helper.telegram_helper.message_utils import sendMessage, editMessage
-from .modules import contact_with_owner, users, samsung_fw_extractor, site_info
+from .modules import samsung_fw_extractor
 
 
 @bot.on_message(filters.command("start"))
