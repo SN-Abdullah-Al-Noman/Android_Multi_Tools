@@ -11,3 +11,4 @@ pymongo
 python-dotenv
 telegraph
 tgcrypto
+liblp
