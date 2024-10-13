@@ -85,7 +85,7 @@ async def samsung_fw_extract(client, message):
     lz4_files = [file for file in os.listdir(DOWNLOAD_DIR) if file.endswith(".lz4")]
     for file in lz4_files:
         lz4_file_path = os.path.join(DOWNLOAD_DIR, file)
-        subprocess.run(["7z", "x", lz4_file_path, f"-o{DOWNLOAD_DIR}"])
+        subprocess.run(["lz4", "-d", lz4_file_path, f"-o{DOWNLOAD_DIR}"])
 
     banner = f"\n{banner}\n<b>Step 4:</b> Converting sparse super.img to raw super.img."
     await editMessage(status, banner)
