@@ -46,7 +46,7 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
 
     try:
-        subprocess.run(['wget', link, '-O', 'fw.zip'], cwd=DOWNLOAD_DIR)
+        subprocess.run(['wget', '-O', 'fw.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', 'link'], cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
@@ -57,7 +57,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 1:</b> Extracting firmware zip."
     await editMessage(status, banner)
     try:
-        subprocess.run(['unzip', 'fw.zip'], cwd=DOWNLOAD_DIR)
+        "subprocess.run(['7z', 'x', 'fw.zip'], cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
