@@ -150,7 +150,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 7:</b> Compressing all files into single zip."
     await editMessage(status, banner)
     try:
-        subprocess.run('7z a -tzip -mx=9 archive.zip *', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('7z a -tzip -mx=9 archive.zip *.xz', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
         await editMessage(status, banner)
