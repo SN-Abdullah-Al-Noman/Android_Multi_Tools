@@ -50,6 +50,7 @@ async def samsung_fw_extract(client, message):
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
+        return
 
     banner = f"\n{banner}\nFirmware download complete.\n"
     await editMessage(status, banner)
@@ -57,10 +58,11 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 1:</b> Extracting firmware zip."
     await editMessage(status, banner)
     try:
-        subprocess.run(['7z', 'x', 'fw.zip'], cwd=DOWNLOAD_DIR)
+        subprocess.run('7z x fw.zip && rm -rf firmware.zip && rm -rf *.txt && for file in *.md5; do sudo mv -- "$file" "${file%.md5}"; done', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
+        return
 
     for file in os.listdir(DOWNLOAD_DIR):
         if file.endswith(".tar.md5"):
@@ -85,18 +87,33 @@ async def samsung_fw_extract(client, message):
     lz4_files = [file for file in os.listdir(DOWNLOAD_DIR) if file.endswith(".lz4")]
     for file in lz4_files:
         lz4_file_path = os.path.join(DOWNLOAD_DIR, file)
-        subprocess.run(["lz4", "-d", lz4_file_path, f"-o{DOWNLOAD_DIR}"])
+        try:
+            subprocess.run(["lz4", "-d", lz4_file_path, f"-o{DOWNLOAD_DIR}"])
+        except Exception as e:
+            banner = f"\n{banner}\n{e}."
+            await editMessage(status, banner)
+            return
 
     banner = f"\n{banner}\n<b>Step 4:</b> Converting sparse super.img to raw super.img."
     await editMessage(status, banner)
-    subprocess.run("simg2img super.img super_raw.img", shell=True, cwd=DOWNLOAD_DIR)
-    subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
-    subprocess.run("mv super_raw.img super.img", shell=True, cwd=DOWNLOAD_DIR)
+    try:
+        subprocess.run("simg2img super.img super_raw.img", shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run("mv super_raw.img super.img", shell=True, cwd=DOWNLOAD_DIR)
+    except Exception as e:
+            banner = f"\n{banner}\n{e}."
+            await editMessage(status, banner)
+            return
 
     banner = f"\n{banner}\n<b>Step 5:</b> Extracting all partitions from super.img"
     await editMessage(status, banner)
-    subprocess.run("lpunpack super.img", shell=True, cwd=DOWNLOAD_DIR)
-    subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
+    try:
+        subprocess.run("lpunpack super.img", shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
+    except Exception as e:
+            banner = f"\n{banner}\n{e}."
+            await editMessage(status, banner)
+            return
 
     banner = f"\n{banner}\n<b>Step 6:</b> Compressing all img to xz level 9."
     await editMessage(status, banner)
