@@ -56,4 +56,5 @@ async def main():
     pass
 
 
+bot.loop.run_until_complete(main())
 bot.loop.run_forever()
