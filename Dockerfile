@@ -5,7 +5,7 @@ RUN chmod 777 /usr/src/app
 
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt --break-system-packages
-RUN sudo apt install android-sdk-libsparse-utils
+RUN apt install android-sdk-libsparse-utils -y
 COPY . .
 
 CMD ["bash", "start.sh"]
