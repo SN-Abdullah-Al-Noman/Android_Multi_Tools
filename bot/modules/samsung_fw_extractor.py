@@ -10,7 +10,7 @@ from googleapiclient.http import MediaIoBaseUpload
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
 
-from bot import bot, bot_loop
+from bot import bot, bot_loop, DRIVE_FOLDER_ID
 from bot.helper.telegram_helper.filters import CustomFilters
 
 
