@@ -4,7 +4,7 @@ asyncio
 google-api-python-client
 google_auth_oauthlib
 motor
-oauth2client=<4.0.0
+oauth2client
 requests
 pyrogram
 pymongo
