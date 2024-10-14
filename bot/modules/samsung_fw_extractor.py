@@ -101,8 +101,8 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 8:</b> Uploading zip to Google Drive."
     await editMessage(status, banner)
     try:
-        file = await upload_in_drive(os.path.join(DOWNLOAD_DIR, "archive.zip"), DRIVE_FOLDER_ID)  # Await the upload_in_drive function
-        banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is the file link: https://drive.google.com/file/d/{file.get('id')}/view"
+        file = await upload_in_drive(os.path.join(DOWNLOAD_DIR, "archive.zip"), DRIVE_FOLDER_ID)
+        banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is the file link:\nhttps://drive.google.com/file/d/{file.get('id')}/view"
         await editMessage(status, banner)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
