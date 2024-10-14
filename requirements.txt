@@ -2,7 +2,7 @@ aiofiles
 apscheduler
 asyncio
 google-api-python-client
-google_auth_oauthlib
+google_auth_oauthlib=<4.0.0
 motor
 oauth2client
 requests
