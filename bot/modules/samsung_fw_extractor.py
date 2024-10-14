@@ -17,8 +17,8 @@ from bot import bot, bot_loop, DRIVE_FOLDER_ID, DOWNLOAD_DIR
 from bot.helper.telegram_helper.filters import CustomFilters
 
 
-if not os.path.exists(DOWNLOAD_DIR):
-    os.makedirs(DOWNLOAD_DIR)
+DOWNLOAD_DIR = "work"
+os.makedirs(DOWNLOAD_DIR)
 
 
 async def sendMessage(message, text):
