@@ -18,6 +18,7 @@ from bot.helper.telegram_helper.filters import CustomFilters
 
 
 DOWNLOAD_DIR = "work"
+rmtree(DOWNLOAD_DIR, ignore_errors=True)
 os.makedirs(DOWNLOAD_DIR)
 
 
