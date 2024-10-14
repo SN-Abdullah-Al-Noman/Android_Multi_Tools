@@ -2,9 +2,9 @@ aiofiles
 apscheduler
 asyncio
 google-api-python-client
-google_auth_oauthlib==0.4.0
+google_auth_oauthlib
 motor
-oauth2client
+oauth2client=<4.0.0
 requests
 pyrogram
 pymongo
