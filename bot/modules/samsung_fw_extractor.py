@@ -41,7 +41,7 @@ def new_task(func):
 
 
 @new_task
-def upload_in_drive(file_path, DRIVE_FOLDER_ID):
+async def upload_in_drive(file_path, DRIVE_FOLDER_ID):
     file_name = os.path.basename(file_path)
     
     credentials = None
@@ -69,7 +69,7 @@ def upload_in_drive(file_path, DRIVE_FOLDER_ID):
         supportsAllDrives=True,
         fields='id'
     ).execute()
-    print(f'File uploaded. File ID is: {file.get("id")}')
+    return file
 
 
 @new_task
@@ -80,9 +80,9 @@ async def samsung_fw_extract(client, message):
         link = reply_to.text.split(maxsplit=1)[0].strip()
     
     if not link:
-        return await message.reply(f"Please reply any samsung firmware download link")
+        return await message.reply("Please reply to any Samsung firmware download link.")
 
-    banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
+    banner = "<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
 
     if not os.path.exists(DOWNLOAD_DIR):
@@ -92,18 +92,17 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
 
     try:
-        subprocess.run(['wget', '-O', 'archive.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
+        subprocess.run(['wget', '-O', 'archive.zip', '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0', link], cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
-        # subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
         await editMessage(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 8:</b> Uploading zip in google drive."
+    banner = f"\n{banner}\n<b>Step 8:</b> Uploading zip to Google Drive."
     await editMessage(status, banner)
     try:
-        upload_in_drive(os.path.join(DOWNLOAD_DIR, "archive.zip"), DRIVE_FOLDER_ID)
-        banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is file link : {file.get("id")}"
+        file = await upload_in_drive(os.path.join(DOWNLOAD_DIR, "archive.zip"), DRIVE_FOLDER_ID)  # Await the upload_in_drive function
+        banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is the file link: https://drive.google.com/file/d/{file.get('id')}/view"
         await editMessage(status, banner)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
