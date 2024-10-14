@@ -3,7 +3,7 @@ from pyrogram import filters
 from subprocess import run as srun
 from aiofiles import open as aiopen
 from pyrogram.handlers import MessageHandler
-from os import path as ospath, remove as osremove, execl as osexecl, makedirs
+from os import path as ospath, remove as osremove, execl as osexecl
 
 
 from bot import bot, LOGGER, OWNER_ID, DOWNLOAD_DIR
@@ -55,11 +55,7 @@ async def restart_notification():
 
 
 async def main():
-    try:
-        rmtree(DOWNLOAD_DIR, ignore_errors=True)
-    except:
-        pass
-    makedirs(DOWNLOAD_DIR, exist_ok=True)
+    pass
 
 
 @bot.on_message(filters.command("restart"))
