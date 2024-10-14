@@ -1,9 +1,12 @@
+import io
 import os
 import shutil
+import pickle
 import subprocess
 from functools import wraps
 
 from google.oauth2 import service_account
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
 
@@ -87,7 +90,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 8:</b> Uploading zip in google drive."
     await editMessage(status, banner)
     try:
-        upload_in_drive(archive.zip, DOWNLOAD_DIR, DRIVE_FOLDER_ID)
+        upload_in_drive("archive.zip", DOWNLOAD_DIR, DRIVE_FOLDER_ID)
         banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is file link : {file.get("id")}"
         await editMessage(status, banner)
     except Exception as e:
