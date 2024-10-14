@@ -177,4 +177,4 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
 
-bot.add_handler(MessageHandler(samsung_fw_extract, filters=command("fw")))
+bot.add_handler(MessageHandler(samsung_fw_extract, filters=command("fw") & CustomFilters.owner))
