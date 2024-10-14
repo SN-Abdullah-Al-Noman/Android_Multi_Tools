@@ -170,7 +170,7 @@ async def samsung_fw_extract(client, message):
         await editMessage(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 7:</b> Creating folder in Google Drive and uploading .xz files."
+    banner = f"\n{banner}\n<b>Step 7:</b> Creating folder in Google Drive."
     await editMessage(status, banner)
 
     credentials = None
