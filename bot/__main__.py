@@ -1,11 +1,12 @@
-from aiofiles import open as aiopen
-from pyrogram import filters
-from pyrogram.handlers import MessageHandler
-from os import path as ospath, remove as osremove, execl as osexecl
 from sys import executable
+from pyrogram import filters
 from subprocess import run as srun
+from aiofiles import open as aiopen
+from pyrogram.handlers import MessageHandler
+from os import path as ospath, remove as osremove, execl as osexecl, makedirs
 
-from bot import bot, LOGGER, OWNER_ID
+
+from bot import bot, LOGGER, OWNER_ID, DOWNLOAD_DIR
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.button_build import ButtonMaker
@@ -52,8 +53,13 @@ async def restart_notification():
         except:
             pass
 
+
 async def main():
-    pass
+    try:
+        rmtree(DOWNLOAD_DIR, ignore_errors=True)
+    except:
+        pass
+    makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 
 @bot.on_message(filters.command("restart"))
