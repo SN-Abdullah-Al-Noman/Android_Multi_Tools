@@ -41,7 +41,9 @@ def new_task(func):
 
 
 @new_task
-def upload_in_drive(file_name, file_path, DRIVE_FOLDER_ID):
+def upload_in_drive(file_path, DRIVE_FOLDER_ID):
+    file_name = os.path.basename(file_path)
+    
     credentials = None
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
@@ -57,8 +59,16 @@ def upload_in_drive(file_name, file_path, DRIVE_FOLDER_ID):
     file_metadata = {'name': file_name, 'parents': [DRIVE_FOLDER_ID]}
     desired_speed_mbps = 400
     chunk_size = int(desired_speed_mbps * 1000000 / 8)
-    media_body = MediaIoBaseUpload(io.BytesIO(open(file_path, 'rb').read()), mimetype='application/octet-stream', resumable=True)
-    file = drive_service.files().create(body=file_metadata, media_body=media_body, supportsAllDrives=True, fields='id').execute()
+    
+    with open(file_path, 'rb') as f:
+        media_body = MediaIoBaseUpload(io.BytesIO(f.read()), mimetype='application/octet-stream', resumable=True)
+    
+    file = drive_service.files().create(
+        body=file_metadata,
+        media_body=media_body,
+        supportsAllDrives=True,
+        fields='id'
+    ).execute()
     print(f'File uploaded. File ID is: {file.get("id")}')
 
 
@@ -85,20 +95,20 @@ async def samsung_fw_extract(client, message):
         subprocess.run(['wget', '-O', 'archive.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
-        subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
+        # subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
         await editMessage(status, banner)
         return
 
     banner = f"\n{banner}\n<b>Step 8:</b> Uploading zip in google drive."
     await editMessage(status, banner)
     try:
-        upload_in_drive("archive.zip", DOWNLOAD_DIR, DRIVE_FOLDER_ID)
+        upload_in_drive(os.path.join(DOWNLOAD_DIR, "archive.zip"), DRIVE_FOLDER_ID)
         banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is file link : {file.get("id")}"
         await editMessage(status, banner)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
-        subprocess.run("rm -rf *.zip", shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
         return
 
 bot.add_handler(MessageHandler(samsung_fw_extract, filters=command("fw")))
