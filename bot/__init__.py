@@ -45,6 +45,11 @@ DRIVE_FOLDER_ID = environ.get('DRIVE_FOLDER_ID', '')
 if len(DRIVE_FOLDER_ID) == 0:
     DRIVE_FOLDER_ID = ''
 
+DOWNLOAD_DIR = environ.get("DOWNLOAD_DIR", "")
+if len(DOWNLOAD_DIR) == 0:
+    DOWNLOAD_DIR = "/usr/src/app/downloads/"
+elif not DOWNLOAD_DIR.endswith("/"):
+    DOWNLOAD_DIR = f"{DOWNLOAD_DIR}/"
 DATABASE_URL = environ.get('DATABASE_URL', '') 
 if len(DATABASE_URL) == 0: 
     DATABASE_URL = '' 
