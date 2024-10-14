@@ -40,8 +40,18 @@ def new_task(func):
     return wrapper
 
 
+async def create_drive_folder(drive_service, folder_name, parent_folder_id):
+    folder_metadata = {
+        'name': folder_name,
+        'mimeType': 'application/vnd.google-apps.folder',
+        'parents': [parent_folder_id]
+    }
+    folder = drive_service.files().create(body=folder_metadata, fields='id').execute()
+    return folder.get('id')
+
+
 @new_task
-async def upload_in_drive(file_path, DRIVE_FOLDER_ID):
+async def upload_in_drive(file_path, drive_folder_id):
     file_name = os.path.basename(file_path)
     
     credentials = None
@@ -56,9 +66,7 @@ async def upload_in_drive(file_path, DRIVE_FOLDER_ID):
             raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
 
     drive_service = build('drive', 'v3', credentials=credentials)
-    file_metadata = {'name': file_name, 'parents': [DRIVE_FOLDER_ID]}
-    desired_speed_mbps = 400
-    chunk_size = int(desired_speed_mbps * 1000000 / 8)
+    file_metadata = {'name': file_name, 'parents': [drive_folder_id]}
     
     with open(file_path, 'rb') as f:
         media_body = MediaIoBaseUpload(io.BytesIO(f.read()), mimetype='application/octet-stream', resumable=True)
@@ -75,11 +83,11 @@ async def upload_in_drive(file_path, DRIVE_FOLDER_ID):
 @new_task
 async def samsung_fw_extract(client, message):
     args = message.text.split()
-    filename = args[1] if len(args) > 1 else ''
+    folder_name = args[1] if len(args) > 1 else ''
     link = args[2] if len(args) > 2 else ''
 
-    if not filename or not link:
-        return await message.reply("Please provide a filename and link. Usage: /fw S24.zip www.sm_fw.com")
+    if not folder_name or not link:
+        return await message.reply("Please provide a folder_name and link. Usage: /fw S24 www.sm_fw.com")
 
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
@@ -161,19 +169,31 @@ async def samsung_fw_extract(client, message):
         await editMessage(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 7:</b> Compressing all files into single zip."
+    banner = f"\n{banner}\n<b>Step 7:</b> Creating folder in Google Drive and uploading .xz files."
     await editMessage(status, banner)
-    try:
-        subprocess.run('7z a -tzip -mx=9 f"{filename}" *.xz', shell=True, cwd=DOWNLOAD_DIR)
-    except Exception as e:
-        banner = f"\n{banner}\n{e}."
-        await editMessage(status, banner)
-        return
 
-    banner = f"\n{banner}\n<b>Step 8:</b> Uploading zip in google drive."
+    credentials = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            credentials = pickle.load(token)
+
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
+        else:
+            raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
+
+    drive_service = build('drive', 'v3', credentials=credentials)
+    drive_folder_id = await create_drive_folder(drive_service, folder_name, DRIVE_FOLDER_ID)
+
+    banner = f"\n{banner}\n<b>Step 8:</b> Uploading all files in google drive."
     await editMessage(status, banner)
-    file = await upload_in_drive(os.path.join(DOWNLOAD_DIR, "archive.zip"), DRIVE_FOLDER_ID)
-    banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is the file link:\nhttps://drive.google.com/file/d/{file.get('id')}/view"
+    for file_name in os.listdir(DOWNLOAD_DIR):
+        if file_name.endswith('.xz'):
+            file_path = os.path.join(DOWNLOAD_DIR, file_name)
+            await upload_in_drive(file_path, drive_folder_id)
+
+    banner = f"\n{banner}\n\n<b>Upload Completed.</b>\nFolder link: https://drive.google.com/drive/folders/{drive_folder_id}"
     await editMessage(status, banner)
     subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
 
