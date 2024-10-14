@@ -20,14 +20,6 @@ BGDBH1
 
 DATABASE_URL = "mongodb+srv://Atrocious-Robot:Cjka8UGjoN1Nj9gB@atrocious-robot.2quemf3.mongodb.net/?retryWrites=true&w=majority"
 
-
-async def restart(client, message):
-    restart_message = await sendMessage(message, "Restarting...")
-    srun(["python3", "update.py"])
-    await editMessage(restart_message, f"Bot Restarted.")
-    osexecl(executable, executable, "-m", "bot")
-        
-
 async def check_sites(client, message):
     ag_sites_list = []
     non_ag_sites = []
@@ -154,14 +146,3 @@ async def delete_site_info(client, message):
         await message.reply(f"Site information for <b>{site_code}</b> has been successfully deleted.")
     else:
         await message.reply(f"No information found for site code <b>{site_code}</b>.")
-
-
-@bot.on_message()
-async def check_command(client, message):
-    if message.text.startswith("restart"):
-        await restart(client, message)
-    if message.text.startswith("sites"):
-        await site_list(client, message)
-    if message.text.startswith("delete"):
-        await delete_site_info(client, message)
-
