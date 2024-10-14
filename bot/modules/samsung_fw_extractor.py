@@ -13,22 +13,20 @@ from googleapiclient.http import MediaIoBaseUpload
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
 
-from bot import bot, bot_loop, DRIVE_FOLDER_ID
+from bot import bot, bot_loop, DRIVE_FOLDER_ID, DOWNLOAD_DIR
 from bot.helper.telegram_helper.filters import CustomFilters
-
-
-DOWNLOAD_DIR = "./f/"
-files_to_keep = ["boot.img.lz4", "super.img.lz4"]
 
 
 async def sendMessage(message, text):
     return await message.reply(text=text, quote=True)
+
 
 async def editMessage(message, text):
     try:
         await message.edit(text=text)
     except:
         pass
+
 
 def new_task(func):
     @wraps(func)
