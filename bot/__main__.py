@@ -56,5 +56,13 @@ async def main():
     pass
 
 
+@bot.on_message(filters.command("restart"))
+async def restart(client, message):
+    restart_message = await sendMessage(message, "Restarting...")
+    srun(["python3", "update.py"])
+    await editMessage(restart_message, f"Bot Restarted.")
+    osexecl(executable, executable, "-m", "bot")
+
+
 bot.loop.run_until_complete(main())
 bot.loop.run_forever()
