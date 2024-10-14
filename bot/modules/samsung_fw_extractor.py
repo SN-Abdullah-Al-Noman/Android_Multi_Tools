@@ -75,12 +75,11 @@ async def upload_in_drive(file_path, DRIVE_FOLDER_ID):
 @new_task
 async def samsung_fw_extract(client, message):
     args = message.text.split()
-    link = args[1] if len(args) > 1 else ''
-    if len(link) == 0 and (reply_to := message.reply_to_message):
-        link = reply_to.text.split(maxsplit=1)[0].strip()
-    
-    if not link:
-        return await message.reply(f"Please reply any samsung firmware download link")
+    filename = args[1] if len(args) > 1 else ''
+    link = args[2] if len(args) > 2 else ''
+
+    if not filename or not link:
+        return await message.reply("Please provide a filename and link. Usage: /fw S24.zip www.sm_fw.com")
 
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
@@ -165,7 +164,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 7:</b> Compressing all files into single zip."
     await editMessage(status, banner)
     try:
-        subprocess.run('7z a -tzip -mx=9 archive.zip *.xz', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('7z a -tzip -mx=9 f"{filename}" *.xz', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
         await editMessage(status, banner)
