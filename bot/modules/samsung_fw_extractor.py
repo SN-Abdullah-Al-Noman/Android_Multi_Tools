@@ -90,7 +90,7 @@ async def samsung_fw_extract(client, message):
         upload_in_drive(archive.zip, DOWNLOAD_DIR, DRIVE_FOLDER_ID)
         banner = f"\n{banner}\n\n<b>File Uploading Completed.</b>\nHere is file link : {file.get("id")}"
         await editMessage(status, banner)
-    except error as e:
+    except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
         subprocess.run("rm -rf *.zip", shell=True, cwd=DOWNLOAD_DIR)
