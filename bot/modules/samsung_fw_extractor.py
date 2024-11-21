@@ -75,23 +75,12 @@ async def download_from_google_drive(link, destination):
     drive_service = build('drive', 'v3', credentials=credentials)
     
     file_id = extract_file_id_from_link(link)
-    file_info = drive_service.files().get(fileId=file_id, fields="size").execute()
-    file_size = int(file_info.get("size", 0))  # Total file size in bytes
-    
     request = drive_service.files().get_media(fileId=file_id)
     with open(destination, 'wb') as f:
         downloader = MediaIoBaseDownload(f, request)
         done = False
-        downloaded_size = 0
-
         while not done:
             status, done = downloader.next_chunk()
-            if status:
-                downloaded_size += status.resumable_progress
-                progress_percentage = (downloaded_size / file_size) * 100
-                speed = status.resumable_progress / (status.total_time or 1) / 1024  # Speed in KB/s
-                print(f"Downloaded: {progress_percentage:.2f}% at {speed:.2f} KB/s")
-                
     return destination
 
 
