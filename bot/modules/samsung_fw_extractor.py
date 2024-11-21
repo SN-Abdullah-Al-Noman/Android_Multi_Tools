@@ -86,7 +86,7 @@ async def create_drive_folder(drive_service, folder_name, parent_folder_id):
 @new_task
 async def upload_in_drive(file_path, drive_folder_id):
     credentials = load_credentials()
-    drive_service = build('drive', 'v3', credentials=creds)
+    drive_service = build('drive', 'v3', credentials=credentials)
 
     file_metadata = {'name': os.path.basename(file_path), 'parents': [drive_folder_id]}
     with open(file_path, 'rb') as f:
@@ -124,13 +124,6 @@ async def samsung_fw_extract(client, message):
             await download_from_google_drive(link, file_path)
         else:
             subprocess.run(['wget', '-O', 'fw.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
-    except Exception as e:
-        banner = f"\n{banner}\nFailed: {e}."
-        await editMessage(status, banner)
-        return
-
-    
-            
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
