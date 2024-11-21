@@ -59,6 +59,22 @@ def load_credentials():
     return credentials
 
 
+def extract_file_id_from_link(link):
+    """
+    Extracts the file ID from a Google Drive shareable link.
+    """
+    parsed_url = urlparse(link)
+    if "drive.google.com" in parsed_url.netloc:
+        if "id=" in parsed_url.query:
+            # Extract the ID from the query parameters
+            query_params = parse_qs(parsed_url.query)
+            return query_params.get("id", [None])[0]
+        elif "/d/" in parsed_url.path:
+            # Extract the ID from the URL path
+            return parsed_url.path.split("/d/")[1].split("/")[0]
+    raise ValueError("Invalid Google Drive link format")
+
+
 async def download_from_google_drive(link, destination):
     credentials = load_credentials()
     drive_service = build('drive', 'v3', credentials=credentials)
