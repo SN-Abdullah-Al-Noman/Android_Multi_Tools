@@ -4,6 +4,7 @@ import shutil
 import pickle
 import subprocess
 from functools import wraps
+from urllib.parse import urlparse, parse_qs
 
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
@@ -15,6 +16,27 @@ from pyrogram.handlers import MessageHandler
 
 from bot import bot, bot_loop, DRIVE_FOLDER_ID
 from bot.helper.telegram_helper.filters import CustomFilters
+
+
+async def download_from_google_drive(link, destination, credentials):
+    file_id = None
+    parsed_url = urlparse(link)
+    if "drive.google.com" in link:
+        if 'id' in parse_qs(parsed_url.query):
+            file_id = parse_qs(parsed_url.query)['id'][0]
+        else:
+            file_id = parsed_url.path.split('/')[-1]
+    if not file_id:
+        raise Exception("Unable to extract file ID from Google Drive link.")
+
+    drive_service = build('drive', 'v3', credentials=credentials)
+    request = drive_service.files().get_media(fileId=file_id)
+    with open(destination, 'wb') as f:
+        downloader = MediaIoBaseDownload(f, request)
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+    return destination
 
 
 DOWNLOAD_DIR = "work"
@@ -100,7 +122,22 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
 
     try:
-        subprocess.run(['wget', '-O', 'fw.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
+        if "drive.google.com" in link:
+            credentials = None
+            if os.path.exists('token.pickle'):
+                with open('token.pickle', 'rb') as token:
+                    credentials = pickle.load(token)
+
+            if not credentials or not credentials.valid:
+                if credentials and credentials.expired and credentials.refresh_token:
+                    credentials.refresh(Request())
+                else:
+                    raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
+
+            file_path = os.path.join(DOWNLOAD_DIR, 'fw.zip')
+            await download_from_google_drive(link, file_path, credentials)
+        else:
+            subprocess.run(['wget', '-O', 'fw.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
