@@ -8,6 +8,7 @@ from urllib.parse import urlparse, parse_qs
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.http import MediaIoBaseUpload
 from googleapiclient.http import MediaIoBaseDownload
@@ -24,21 +25,30 @@ shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
 os.makedirs(DOWNLOAD_DIR)
 
 
-async def download_from_google_drive(link, destination, credentials):
-    file_id = None
-    parsed_url = urlparse(link)
-    if "drive.google.com" in link:
-        if 'id' in parse_qs(parsed_url.query):
-            file_id = parse_qs(parsed_url.query)['id'][0]
-        else:
-            file_id = parsed_url.path.split('/')[-1]
-    if not file_id:
-        raise Exception("Unable to extract file ID from Google Drive link.")
+def load_credentials():
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+    creds = None
 
-    drive_service = build('drive', 'v3', credentials=credentials)
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            raise Exception("No valid credentials available. Re-authentication required.")
+    
+    return creds
+
+
+async def download_from_google_drive(link, destination):
+    creds = load_credentials()
+    drive_service = build('drive', 'v3', credentials=creds)
+    
+    file_id = extract_file_id_from_link(link)  # You can keep your current logic for this.
     request = drive_service.files().get_media(fileId=file_id)
     with open(destination, 'wb') as f:
-        downloader = MediaIoBaseDownload(f, request, chunksize=50 * 1024 * 1024)
+        downloader = MediaIoBaseDownload(f, request)
         done = False
         while not done:
             status, done = downloader.next_chunk()
@@ -76,22 +86,10 @@ async def create_drive_folder(drive_service, folder_name, parent_folder_id):
 
 @new_task
 async def upload_in_drive(file_path, drive_folder_id):
-    file_name = os.path.basename(file_path)
-    
-    credentials = None
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            credentials = pickle.load(token)
+    creds = load_credentials()
+    drive_service = build('drive', 'v3', credentials=creds)
 
-    if not credentials or not credentials.valid:
-        if credentials and credentials.expired and credentials.refresh_token:
-            credentials.refresh(Request())
-        else:
-            raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
-
-    drive_service = build('drive', 'v3', credentials=credentials)
-    file_metadata = {'name': file_name, 'parents': [drive_folder_id]}
-    
+    file_metadata = {'name': os.path.basename(file_path), 'parents': [drive_folder_id]}
     with open(file_path, 'rb') as f:
         media_body = MediaIoBaseUpload(io.BytesIO(f.read()), mimetype='application/octet-stream', resumable=True)
     
