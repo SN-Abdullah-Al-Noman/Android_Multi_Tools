@@ -1,10 +1,11 @@
 aiofiles
 apscheduler
 asyncio
-google-api-python-client
-google_auth_oauthlib
-motor
 oauth2client
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+motor
 requests
 pyrogram
 pymongo
