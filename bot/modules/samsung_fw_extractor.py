@@ -38,7 +38,7 @@ async def download_from_google_drive(link, destination, credentials):
     drive_service = build('drive', 'v3', credentials=credentials)
     request = drive_service.files().get_media(fileId=file_id)
     with open(destination, 'wb') as f:
-        downloader = MediaIoBaseDownload(fh, request, chunksize=50 * 1024 * 1024)
+        downloader = MediaIoBaseDownload(f, request, chunksize=50 * 1024 * 1024)
         done = False
         while not done:
             status, done = downloader.next_chunk()
