@@ -25,6 +25,26 @@ shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
 os.makedirs(DOWNLOAD_DIR)
 
 
+async def sendMessage(message, text):
+    return await message.reply(text=text, quote=True)
+
+
+async def editMessage(message, text):
+    try:
+        await message.edit(text=text)
+    except:
+        pass
+
+
+def new_task(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return bot_loop.create_task(func(*args, **kwargs))
+
+    return wrapper
+
+
+
 def load_credentials():
     SCOPES = ['https://www.googleapis.com/auth/drive']
     creds = None
@@ -45,7 +65,7 @@ async def download_from_google_drive(link, destination):
     creds = load_credentials()
     drive_service = build('drive', 'v3', credentials=creds)
     
-    file_id = extract_file_id_from_link(link)  # You can keep your current logic for this.
+    file_id = extract_file_id_from_link(link)
     request = drive_service.files().get_media(fileId=file_id)
     with open(destination, 'wb') as f:
         downloader = MediaIoBaseDownload(f, request)
@@ -53,25 +73,6 @@ async def download_from_google_drive(link, destination):
         while not done:
             status, done = downloader.next_chunk()
     return destination
-
-
-async def sendMessage(message, text):
-    return await message.reply(text=text, quote=True)
-
-
-async def editMessage(message, text):
-    try:
-        await message.edit(text=text)
-    except:
-        pass
-
-
-def new_task(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        return bot_loop.create_task(func(*args, **kwargs))
-
-    return wrapper
 
 
 async def create_drive_folder(drive_service, folder_name, parent_folder_id):
@@ -119,24 +120,19 @@ async def samsung_fw_extract(client, message):
 
     banner = f"\n{banner}\nFirmware downloading."
     await editMessage(status, banner)
-
     try:
         if "drive.google.com" in link:
-            credentials = None
-            if os.path.exists('token.pickle'):
-                with open('token.pickle', 'rb') as token:
-                    credentials = pickle.load(token)
-
-            if not credentials or not credentials.valid:
-                if credentials and credentials.expired and credentials.refresh_token:
-                    credentials.refresh(Request())
-                else:
-                    raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
-
             file_path = os.path.join(DOWNLOAD_DIR, 'fw.zip')
-            await download_from_google_drive(link, file_path, credentials)
+            await download_from_google_drive(link, file_path)
         else:
             subprocess.run(['wget', '-O', 'fw.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
+    except Exception as e:
+        banner = f"\n{banner}\nFailed: {e}."
+        await editMessage(status, banner)
+        return
+
+    
+            
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
