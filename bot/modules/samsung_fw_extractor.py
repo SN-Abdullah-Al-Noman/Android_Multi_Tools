@@ -61,7 +61,7 @@ def load_credentials():
 
 async def download_from_google_drive(link, destination):
     credentials = load_credentials()
-    drive_service = build('drive', 'v3', credentials=creds)
+    drive_service = build('drive', 'v3', credentials=credentials)
     
     file_id = extract_file_id_from_link(link)
     request = drive_service.files().get_media(fileId=file_id)
