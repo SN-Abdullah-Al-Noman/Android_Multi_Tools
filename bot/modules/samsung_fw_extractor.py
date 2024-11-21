@@ -45,23 +45,22 @@ def new_task(func):
 
 
 def load_credentials():
-    SCOPES = ['https://www.googleapis.com/auth/drive']
-    creds = None
-
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            raise Exception("No valid credentials available. Re-authentication required.")
+    credentials = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            credentials = pickle.load(token)
     
-    return creds
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
+        else:
+            raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
+
+    return credentials
 
 
 async def download_from_google_drive(link, destination):
-    creds = load_credentials()
+    credentials = load_credentials()
     drive_service = build('drive', 'v3', credentials=creds)
     
     file_id = extract_file_id_from_link(link)
@@ -86,7 +85,7 @@ async def create_drive_folder(drive_service, folder_name, parent_folder_id):
 
 @new_task
 async def upload_in_drive(file_path, drive_folder_id):
-    creds = load_credentials()
+    credentials = load_credentials()
     drive_service = build('drive', 'v3', credentials=creds)
 
     file_metadata = {'name': os.path.basename(file_path), 'parents': [drive_folder_id]}
