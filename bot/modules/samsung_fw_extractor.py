@@ -147,6 +147,10 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     try:
         subprocess.run('7z x fw.zip && rm -rf firmware.zip && rm -rf *.txt && for file in *.md5; do mv -- "$file" "${file%.md5}"; done', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -f BL*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -f CP*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -f CSC*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -f HOME*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
