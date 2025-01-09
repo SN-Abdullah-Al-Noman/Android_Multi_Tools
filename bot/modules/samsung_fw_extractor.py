@@ -189,6 +189,7 @@ async def samsung_fw_extract(client, message):
     try:
         subprocess.run('lpunpack super.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf super.img', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf vendor.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
         await editMessage(status, banner)
