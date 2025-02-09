@@ -13,3 +13,4 @@ python-dotenv
 telegraph
 tgcrypto
 liblp
+git+https://github.com/martinetd/samloader.git
