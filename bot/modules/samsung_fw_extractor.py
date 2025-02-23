@@ -120,9 +120,14 @@ def run_command(command):
 
 @new_task
 async def samsung_fw_extract(client, message):
-    if len(sys.argv) != 4:
+    args = message.text.split()[1:]
+    if len(args) != 3:
         await sendMessage(message, f"<b>Usage:</b> /fw MODEL CSC IMEI")
         return
+
+    MODEL = args[0]
+    CSC = args[1]
+    IMEI = args[2]
 
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
