@@ -163,22 +163,30 @@ async def samsung_fw_extract(client, message):
         await edit_message(status, banner)
         return
 
-    banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
-    await edit_message(status, banner)
-
     files = glob.glob(f"{DOWNLOAD_DIR}/*.enc*")
     if files:
+        banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
+        await edit_message(status, banner)
         file_path = files[0]
         decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o {DOWNLOAD_DIR}/firmware.zip"
         if run_command(decrypt_command) is None:
             banner = f"{banner}\n<b>Something Strange Happened.</b>"
             await edit_message(status, banner)
             return
+        else:
+            file_size = os.path.getsize(f"{DOWNLOAD_DIR}/firmware.zip")
+            file_size_mb = file_size / (1024 * 1024)
+            banner = f"{banner}\n<b>Firmware decrypted. Firmware size is :</b> {file_size_mb:.2f} 
+            await edit_message(status, banner)
         os.remove(file_path)
     else:
         banner = f"{banner}\n<b>No encrypted file found for decryption.</b>"
         edit_message(status, banner)
         return
+
+    banner = f"{banner}\nFirmware size is.</b>"
+    await edit_message(status, banner)
+
 
     banner = f"\n{banner}\n\n<b>Step 1:</b> Extracting firmware zip."
     await edit_message(status, banner)
