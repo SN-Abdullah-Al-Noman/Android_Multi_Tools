@@ -67,6 +67,7 @@ def extract_file_id_from_link(link):
             return parsed_url.path.split("/d/")[1].split("/")[0]
     raise ValueError("Invalid Google Drive link format")
 
+
 async def download_from_google_drive(link, destination):
     credentials = load_credentials()
     drive_service = build('drive', 'v3', credentials=credentials)
@@ -80,6 +81,7 @@ async def download_from_google_drive(link, destination):
             status, done = downloader.next_chunk()
     return destination
 
+
 async def create_drive_folder(drive_service, folder_name, parent_folder_id):
     try:
         folder_metadata = {
@@ -91,6 +93,7 @@ async def create_drive_folder(drive_service, folder_name, parent_folder_id):
         return folder.get('id')
     except Exception as e:
         raise Exception(f"Error creating folder in Google Drive: {e}")
+
 
 @new_task
 async def upload_in_drive(file_path, drive_folder_id):
@@ -112,6 +115,7 @@ async def upload_in_drive(file_path, drive_folder_id):
     except Exception as e:
         raise Exception(f"Error uploading file to Google Drive: {e}")
 
+
 def run_command(command):
     try:
         result = subprocess.run(command, capture_output=True, text=True, shell=True, check=True)
@@ -119,6 +123,7 @@ def run_command(command):
     except subprocess.CalledProcessError as e:
         print(f"Command failed: {e.stderr.strip()}")
         return None
+
 
 @new_task
 async def samsung_fw_extract(client, message):
@@ -138,6 +143,7 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
 
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
+    await sendMessage(message, version)
     if version is None:
         banner = f"\n{banner}<b>MODEL or region not found</b>"
         status = await editMessage(message, banner)
