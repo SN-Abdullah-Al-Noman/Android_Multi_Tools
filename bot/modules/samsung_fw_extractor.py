@@ -149,7 +149,7 @@ async def samsung_fw_extract(client, message):
         shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
         os.makedirs(DOWNLOAD_DIR)
 
-    download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O Downloads"
+    download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O {DOWNLOAD_DIR}"
     if run_command(download_command) is None:
         banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
         status = await editMessage(message, banner)
@@ -158,12 +158,12 @@ async def samsung_fw_extract(client, message):
     banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
     status = await editMessage(message, banner)
 
-    files = glob.glob("Downloads/*.enc*")
+    files = glob.glob(f"{DOWNLOAD_DIR}/*.enc*")
     if files:
         file_path = files[0]
-        decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o Downloads/firmware.zip"
+        decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o {DOWNLOAD_DIR}/firmware.zip"
         if run_command(decrypt_command) is None:
-            banner = f"\n<b>{banner}Something Strange Happened.</b>"
+            banner = f"{banner}\n<b>Something Strange Happened.</b>"
             status = await editMessage(message, banner)
             return
         os.remove(file_path)
