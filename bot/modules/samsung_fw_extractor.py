@@ -147,10 +147,10 @@ async def samsung_fw_extract(client, message):
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
     if version:
         banner = f"{banner}\n<b>Update found:</b>\n{version}\n\n<b>Firmware download started.</b>"
-        status = await edit_message(status, banner)
+        await edit_message(status, banner)
     else:
         banner = f"{banner}\n<b>MODEL or REGION not found.</b>"
-        status = await edit_message(status, banner)
+        await edit_message(status, banner)
         return
         
     if os.path.exists(DOWNLOAD_DIR):
@@ -160,11 +160,11 @@ async def samsung_fw_extract(client, message):
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O {DOWNLOAD_DIR}"
     if run_command(download_command) is None:
         banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
-        status = await edit_message(status, banner)
+        await edit_message(status, banner)
         return
 
     banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
-    status = await edit_message(status, banner)
+    await edit_message(status, banner)
 
     files = glob.glob(f"{DOWNLOAD_DIR}/*.enc*")
     if files:
@@ -172,12 +172,12 @@ async def samsung_fw_extract(client, message):
         decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o {DOWNLOAD_DIR}/firmware.zip"
         if run_command(decrypt_command) is None:
             banner = f"{banner}\n<b>Something Strange Happened.</b>"
-            status = await edit_message(status, banner)
+            await edit_message(status, banner)
             return
         os.remove(file_path)
     else:
         banner = f"{banner}\n<b>No encrypted file found for decryption.</b>"
-        status = await edit_message(status, banner)
+        edit_message(status, banner)
         return
 
     banner = f"\n{banner}\n<b>Step 1:</b> Extracting firmware zip."
