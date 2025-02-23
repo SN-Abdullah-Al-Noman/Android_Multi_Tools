@@ -23,7 +23,6 @@ from bot.helper.telegram_helper.filters import CustomFilters
 
 DOWNLOAD_DIR = "work"
 
-
 async def send_message(message, text):
     return await message.reply(text=text, quote=True)
 
