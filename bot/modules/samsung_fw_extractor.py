@@ -23,15 +23,20 @@ from bot.helper.telegram_helper.filters import CustomFilters
 
 DOWNLOAD_DIR = "work"
 
+
 async def sendMessage(message, text):
     return await message.reply(text=text, quote=True)
 
+
 async def editMessage(message, text):
     try:
-        await message.edit(text=text)
+        if message and hasattr(message, 'id'):
+            await message.edit(text=text)
+        else:
+            print("Message is no longer available for editing.")
     except Exception as e:
         print(f"Failed to edit message: {e}")
-        pass
+
 
 def new_task(func):
     @wraps(func)
