@@ -139,11 +139,11 @@ async def samsung_fw_extract(client, message):
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
     if version is None:
         banner = f"\n{banner}<b>MODEL or region not found</b>"
-        status = await sendMessage(message, banner)
+        status = await editMessage(message, banner)
         return
     else:
         banner = f"{banner}\n<b>Update found:</b>\n{version}\n\nFirmware download started."
-        status = await sendMessage(message, banner)
+        status = await editMessage(message, banner)
 
     if os.path.exists(f"{DOWNLOAD_DIR}"):
         shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
@@ -152,11 +152,11 @@ async def samsung_fw_extract(client, message):
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O Downloads"
     if run_command(download_command) is None:
         banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
-        status = await sendMessage(message, banner)
+        status = await editMessage(message, banner)
         return
 
     banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
-    status = await sendMessage(message, banner)
+    status = await editMessage(message, banner)
 
     files = glob.glob("Downloads/*.enc*")
     if files:
@@ -164,12 +164,12 @@ async def samsung_fw_extract(client, message):
         decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o Downloads/firmware.zip"
         if run_command(decrypt_command) is None:
             banner = f"\n<b>{banner}Something Strange Happened.</b>"
-            status = await sendMessage(message, banner)
+            status = await editMessage(message, banner)
             return
         os.remove(file_path)
     else:
         banner = f"{banner}\n<b>No encrypted file found for decryption.</b>"
-        status = await sendMessage(message, banner)
+        status = await editMessage(message, banner)
         return
 
     banner = f"\n{banner}\n<b>Step 1:</b> Extracting firmware zip."
