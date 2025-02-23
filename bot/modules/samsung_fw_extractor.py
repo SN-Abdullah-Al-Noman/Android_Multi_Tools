@@ -120,27 +120,24 @@ def run_command(command):
 
 @new_task
 async def samsung_fw_extract(client, message):
+   if len(sys.argv) != 4:
+       await sendMessage(message, f"<b>Usage: /fw MODEL CSC IMEI")
+       return
+    
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
-
-    MODEL = sys.argv[1]
-    CSC = sys.argv[2]
-    IMEI = sys.argv[3]
-    if len(sys.argv) != 4:
-        print("Usage: /fw <MODEL> <CSC> <IMEI>")
-        return
         
-    banner = f"\n{banner}\nFetching Latest Firmware.."
+    banner = f"\n<b>{banner}\nFetching Latest Firmware.</b>"
     await editMessage(status, banner)
     
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
     if version is None:
-        print("MODEL or region not found")
+        banner = f"\n<b>MODEL or region not found</b>"
+        status = await sendMessage(message, banner)
         return
     else:
-        print(f"Update found: {version}")
-    
-    print("Attempting to Download")
+        banner = f"\n<b>Update found:</b> {version}\nTrying to download"
+        status = await sendMessage(message, banner)
     
     if os.path.exists(f"{DOWNLOAD_DIR}"):
         shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
@@ -148,44 +145,31 @@ async def samsung_fw_extract(client, message):
     
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O Downloads"
     if run_command(download_command) is None:
-        print("Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?")
+        banner = f"\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
+        status = await sendMessage(message, banner)
         return
     
-    print("Decrypting")
+    banner = f"\n<b>Firmware download completed.\nDecrypting firmware.</b>"
+    status = await sendMessage(message, banner)
+    
     files = glob.glob("Downloads/*.enc*")
     if files:
         file_path = files[0]
         decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o Downloads/firmware.zip"
         if run_command(decrypt_command) is None:
-            print("Something Strange Happened.")
+            banner = f"\n<b>Something Strange Happened.</b>"
+            status = await sendMessage(message, banner)
             return
         os.remove(file_path)
     else:
-        print("No encrypted file found for decryption")
-        return
-    
-    version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
-
-    banner = f"\n{banner}\nFirmware downloading."
-    await editMessage(status, banner)
-    try:
-        if "drive.google.com" in link:
-            file_path = os.path.join(DOWNLOAD_DIR, 'fw.zip')
-            await download_from_google_drive(link, file_path)
-        else:
-            subprocess.run(['wget', '-O', 'fw.zip', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
-    except Exception as e:
-        banner = f"\n{banner}\nFailed: {e}."
-        await editMessage(status, banner)
+        banner = f"\n<b>No encrypted file found for decryption.</b>"
+        status = await sendMessage(message, banner)
         return
 
-    banner = f"\n{banner}\nFirmware download complete.\n"
-    await editMessage(status, banner)
-    
     banner = f"\n{banner}\n<b>Step 1:</b> Extracting firmware zip."
     await editMessage(status, banner)
     try:
-        subprocess.run('7z x fw.zip && rm -rf firmware.zip && rm -rf *.txt && for file in *.md5; do mv -- "$file" "${file%.md5}"; done', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('7z x firmware.zip && rm -rf firmware.zip && rm -rf *.txt && for file in *.md5; do mv -- "$file" "${file%.md5}"; done', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -f BL*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -f CP*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -f CSC*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
