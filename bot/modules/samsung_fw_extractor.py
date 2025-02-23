@@ -180,7 +180,7 @@ async def samsung_fw_extract(client, message):
         edit_message(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 1:</b> Extracting firmware zip."
+    banner = f"\n{banner}\n\n<b>Step 1:</b> Extracting firmware zip."
     await edit_message(status, banner)
     try:
         subprocess.run('7z x firmware.zip && rm -rf firmware.zip && rm -rf *.txt && for file in *.md5; do mv -- "$file" "${file%.md5}"; done', shell=True, cwd=DOWNLOAD_DIR)
