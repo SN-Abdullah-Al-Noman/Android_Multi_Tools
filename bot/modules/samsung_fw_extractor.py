@@ -165,7 +165,7 @@ async def samsung_fw_extract(client, message):
         else:
             file_size = os.path.getsize(f"{DOWNLOAD_DIR}/firmware.zip")
             file_size_mb = file_size / (1024 * 1024)
-            banner = f"{banner}\n<b>Firmware decrypted. Firmware size is :</b> {file_size_mb:.2f}"
+            banner = f"{banner}\n<b>Firmware decrypted. Firmware size is :</b> {file_size_mb:.2f} MB\n"
             await edit_message(status, banner)
         os.remove(file_path)
     else:
