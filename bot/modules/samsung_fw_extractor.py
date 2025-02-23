@@ -1,5 +1,7 @@
 import io
 import os
+import sys
+import glob
 import shutil
 import pickle
 import subprocess
@@ -18,11 +20,6 @@ from pyrogram.handlers import MessageHandler
 
 from bot import bot, bot_loop, DRIVE_FOLDER_ID
 from bot.helper.telegram_helper.filters import CustomFilters
-
-
-DOWNLOAD_DIR = "work"
-shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
-os.makedirs(DOWNLOAD_DIR)
 
 
 async def sendMessage(message, text):
@@ -112,20 +109,62 @@ async def upload_in_drive(file_path, drive_folder_id):
     return file
 
 
+def run_command(command):
+    result = subprocess.run(command, capture_output=True, text=True, shell=True)
+    if result.returncode != 0:
+        print(f"{result.stderr.strip()}")
+        return None
+    return result.stdout.strip()
+
+
+
 @new_task
 async def samsung_fw_extract(client, message):
-    args = message.text.split()
-    folder_name = args[1] if len(args) > 1 else ''
-    link = args[2] if len(args) > 2 else ''
-
-    if not folder_name or not link:
-        return await message.reply("Please provide a folder_name and link. Usage: /fw S24 www.sm_fw.com")
-
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
 
-    if not os.path.exists(DOWNLOAD_DIR):
+    MODEL = sys.argv[1]
+    CSC = sys.argv[2]
+    IMEI = sys.argv[3]
+    if len(sys.argv) != 4:
+        print("Usage: /fw <MODEL> <CSC> <IMEI>")
+        return
+        
+    banner = f"\n{banner}\nFetching Latest Firmware.."
+    await editMessage(status, banner)
+    
+    version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
+    if version is None:
+        print("MODEL or region not found")
+        return
+    else:
+        print(f"Update found: {version}")
+    
+    print("Attempting to Download")
+    
+    if os.path.exists(f"{DOWNLOAD_DIR}"):
+        shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
         os.makedirs(DOWNLOAD_DIR)
+    
+    download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O Downloads"
+    if run_command(download_command) is None:
+        print("Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?")
+        return
+    
+    print("Decrypting")
+    files = glob.glob("Downloads/*.enc*")
+    if files:
+        file_path = files[0]
+        decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o Downloads/firmware.zip"
+        if run_command(decrypt_command) is None:
+            print("Something Strange Happened.")
+            return
+        os.remove(file_path)
+    else:
+        print("No encrypted file found for decryption")
+        return
+    
+    version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
 
     banner = f"\n{banner}\nFirmware downloading."
     await editMessage(status, banner)
