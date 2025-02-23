@@ -123,13 +123,13 @@ async def samsung_fw_extract(client, message):
    if len(sys.argv) != 4:
        await sendMessage(message, f"<b>Usage: /fw MODEL CSC IMEI")
        return
-    
+
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
-        
+
     banner = f"\n<b>{banner}\nFetching Latest Firmware.</b>"
     await editMessage(status, banner)
-    
+
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
     if version is None:
         banner = f"\n<b>MODEL or region not found</b>"
@@ -138,20 +138,20 @@ async def samsung_fw_extract(client, message):
     else:
         banner = f"\n<b>Update found:</b> {version}\nTrying to download"
         status = await sendMessage(message, banner)
-    
+
     if os.path.exists(f"{DOWNLOAD_DIR}"):
         shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
         os.makedirs(DOWNLOAD_DIR)
-    
+
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O Downloads"
     if run_command(download_command) is None:
         banner = f"\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
         status = await sendMessage(message, banner)
         return
-    
+
     banner = f"\n<b>Firmware download completed.\nDecrypting firmware.</b>"
     status = await sendMessage(message, banner)
-    
+
     files = glob.glob("Downloads/*.enc*")
     if files:
         file_path = files[0]
