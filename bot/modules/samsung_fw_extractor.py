@@ -138,11 +138,11 @@ async def samsung_fw_extract(client, message):
 
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
     if version is None:
-        banner = f"\n<b>MODEL or region not found</b>"
+        banner = f"\n{banner}<b>MODEL or region not found</b>"
         status = await sendMessage(message, banner)
         return
     else:
-        banner = f"\n<b>{banner}Update found:</b>\n{version}\n\nFirmware download started."
+        banner = f"{banner}\n<b>Update found:</b>\n{version}\n\nFirmware download started."
         status = await sendMessage(message, banner)
 
     if os.path.exists(f"{DOWNLOAD_DIR}"):
@@ -151,11 +151,11 @@ async def samsung_fw_extract(client, message):
 
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O Downloads"
     if run_command(download_command) is None:
-        banner = f"\n<b>{banner}Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
+        banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
         status = await sendMessage(message, banner)
         return
 
-    banner = f"\n<b>{banner}Firmware download completed.\nDecrypting firmware.</b>"
+    banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
     status = await sendMessage(message, banner)
 
     files = glob.glob("Downloads/*.enc*")
@@ -168,7 +168,7 @@ async def samsung_fw_extract(client, message):
             return
         os.remove(file_path)
     else:
-        banner = f"\n<b>{banner}No encrypted file found for decryption.</b>"
+        banner = f"{banner}\n<b>No encrypted file found for decryption.</b>"
         status = await sendMessage(message, banner)
         return
 
