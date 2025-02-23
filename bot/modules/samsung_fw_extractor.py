@@ -30,10 +30,7 @@ async def send_message(message, text):
 
 async def edit_message(message, text):
     try:
-        if message and hasattr(message, 'id'):
-            await message.edit(text=text)
-        else:
-            print("Message is no longer available for editing.")
+        await message.edit(text=text)
     except Exception as e:
         print(f"Failed to edit message: {e}")
 
