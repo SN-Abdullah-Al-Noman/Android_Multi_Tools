@@ -153,7 +153,7 @@ async def samsung_fw_extract(client, message):
         banner = f"{banner}\n<b>Update found:</b>\n{version}\n\n<b>Firmware download started.</b>"
         status = await edit_message(status, banner)
     else:
-        banner = f"{banner}\n<b>MODEL or region not found.</b>"
+        banner = f"{banner}\n<b>MODEL or REGION not found.</b>"
         status = await edit_message(status, banner)
         return
         
