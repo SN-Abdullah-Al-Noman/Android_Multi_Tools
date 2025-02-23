@@ -21,6 +21,7 @@ from pyrogram.handlers import MessageHandler
 from bot import bot, bot_loop, DRIVE_FOLDER_ID
 from bot.helper.telegram_helper.filters import CustomFilters
 
+DOWNLOAD_DIR = "work"
 
 async def sendMessage(message, text):
     return await message.reply(text=text, quote=True)
