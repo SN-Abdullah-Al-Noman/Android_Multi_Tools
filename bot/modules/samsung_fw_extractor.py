@@ -62,6 +62,7 @@ def load_credentials():
 
     return credentials
 
+
 def extract_file_id_from_link(link):
     parsed_url = urlparse(link)
     if "drive.google.com" in parsed_url.netloc:
@@ -150,10 +151,10 @@ async def samsung_fw_extract(client, message):
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
     if version:
         banner = f"{banner}\n<b>Update found:</b>\n{version}\n\nFirmware download started."
-        status = await edit_message(message, banner)
+        status = await edit_message(status, banner)
     else:
         banner = f"\n{banner}<b>MODEL or region not found</b>"
-        status = await edit_message(message, banner)
+        status = await edit_message(status, banner)
         return
         
     if os.path.exists(DOWNLOAD_DIR):
@@ -163,11 +164,11 @@ async def samsung_fw_extract(client, message):
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O {DOWNLOAD_DIR}"
     if run_command(download_command) is None:
         banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
-        status = await edit_message(message, banner)
+        status = await edit_message(status, banner)
         return
 
     banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
-    status = await edit_message(message, banner)
+    status = await edit_message(status, banner)
 
     files = glob.glob(f"{DOWNLOAD_DIR}/*.enc*")
     if files:
@@ -175,12 +176,12 @@ async def samsung_fw_extract(client, message):
         decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o {DOWNLOAD_DIR}/firmware.zip"
         if run_command(decrypt_command) is None:
             banner = f"{banner}\n<b>Something Strange Happened.</b>"
-            status = await edit_message(message, banner)
+            status = await edit_message(status, banner)
             return
         os.remove(file_path)
     else:
         banner = f"{banner}\n<b>No encrypted file found for decryption.</b>"
-        status = await edit_message(message, banner)
+        status = await edit_message(status, banner)
         return
 
     banner = f"\n{banner}\n<b>Step 1:</b> Extracting firmware zip."
