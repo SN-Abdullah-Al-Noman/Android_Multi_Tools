@@ -26,13 +26,12 @@ DOWNLOAD_DIR = "work"
 async def sendMessage(message, text):
     return await message.reply(text=text, quote=True)
 
-
 async def editMessage(message, text):
     try:
         await message.edit(text=text)
-    except:
+    except Exception as e:
+        print(f"Failed to edit message: {e}")
         pass
-
 
 def new_task(func):
     @wraps(func)
@@ -40,7 +39,6 @@ def new_task(func):
         return bot_loop.create_task(func(*args, **kwargs))
 
     return wrapper
-
 
 def load_credentials():
     credentials = None
@@ -50,12 +48,14 @@ def load_credentials():
     
     if not credentials or not credentials.valid:
         if credentials and credentials.expired and credentials.refresh_token:
-            credentials.refresh(Request())
+            try:
+                credentials.refresh(Request())
+            except Exception as e:
+                raise Exception(f"Error refreshing credentials: {e}")
         else:
             raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
 
     return credentials
-
 
 def extract_file_id_from_link(link):
     parsed_url = urlparse(link)
@@ -66,7 +66,6 @@ def extract_file_id_from_link(link):
         elif "/d/" in parsed_url.path:
             return parsed_url.path.split("/d/")[1].split("/")[0]
     raise ValueError("Invalid Google Drive link format")
-
 
 async def download_from_google_drive(link, destination):
     credentials = load_credentials()
@@ -81,16 +80,17 @@ async def download_from_google_drive(link, destination):
             status, done = downloader.next_chunk()
     return destination
 
-
 async def create_drive_folder(drive_service, folder_name, parent_folder_id):
-    folder_metadata = {
-        'name': folder_name,
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [parent_folder_id]
-    }
-    folder = drive_service.files().create(body=folder_metadata, fields='id').execute()
-    return folder.get('id')
-
+    try:
+        folder_metadata = {
+            'name': folder_name,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': [parent_folder_id]
+        }
+        folder = drive_service.files().create(body=folder_metadata, fields='id').execute()
+        return folder.get('id')
+    except Exception as e:
+        raise Exception(f"Error creating folder in Google Drive: {e}")
 
 @new_task
 async def upload_in_drive(file_path, drive_folder_id):
@@ -101,23 +101,24 @@ async def upload_in_drive(file_path, drive_folder_id):
     with open(file_path, 'rb') as f:
         media_body = MediaIoBaseUpload(io.BytesIO(f.read()), mimetype='application/octet-stream', resumable=True)
     
-    file = drive_service.files().create(
-        body=file_metadata,
-        media_body=media_body,
-        supportsAllDrives=True,
-        fields='id'
-    ).execute()
-    return file
-
+    try:
+        file = drive_service.files().create(
+            body=file_metadata,
+            media_body=media_body,
+            supportsAllDrives=True,
+            fields='id'
+        ).execute()
+        return file
+    except Exception as e:
+        raise Exception(f"Error uploading file to Google Drive: {e}")
 
 def run_command(command):
-    result = subprocess.run(command, capture_output=True, text=True, shell=True)
-    if result.returncode != 0:
-        print(f"{result.stderr.strip()}")
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, shell=True, check=True)
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as e:
+        print(f"Command failed: {e.stderr.strip()}")
         return None
-    return result.stdout.strip()
-
-
 
 @new_task
 async def samsung_fw_extract(client, message):
@@ -145,9 +146,9 @@ async def samsung_fw_extract(client, message):
         banner = f"{banner}\n<b>Update found:</b>\n{version}\n\nFirmware download started."
         status = await editMessage(message, banner)
 
-    if os.path.exists(f"{DOWNLOAD_DIR}"):
+    if os.path.exists(DOWNLOAD_DIR):
         shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
-        os.makedirs(DOWNLOAD_DIR)
+    os.makedirs(DOWNLOAD_DIR)
 
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O {DOWNLOAD_DIR}"
     if run_command(download_command) is None:
@@ -213,9 +214,9 @@ async def samsung_fw_extract(client, message):
         subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run("mv super_raw.img super.img", shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
-            banner = f"\n{banner}\n{e}."
-            await editMessage(status, banner)
-            return
+        banner = f"\n{banner}\n{e}."
+        await editMessage(status, banner)
+        return
 
     banner = f"\n{banner}\n<b>Step 5:</b> Extracting all partitions from super.img"
     await editMessage(status, banner)
