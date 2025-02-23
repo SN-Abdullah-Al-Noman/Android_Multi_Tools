@@ -62,30 +62,6 @@ def load_credentials():
 
     return credentials
 
-def extract_file_id_from_link(link):
-    parsed_url = urlparse(link)
-    if "drive.google.com" in parsed_url.netloc:
-        if "id=" in parsed_url.query:
-            query_params = parse_qs(parsed_url.query)
-            return query_params.get("id", [None])[0]
-        elif "/d/" in parsed_url.path:
-            return parsed_url.path.split("/d/")[1].split("/")[0]
-    raise ValueError("Invalid Google Drive link format")
-
-
-async def download_from_google_drive(link, destination):
-    credentials = load_credentials()
-    drive_service = build('drive', 'v3', credentials=credentials)
-    
-    file_id = extract_file_id_from_link(link)
-    request = drive_service.files().get_media(fileId=file_id)
-    with open(destination, 'wb') as f:
-        downloader = MediaIoBaseDownload(f, request)
-        done = False
-        while not done:
-            status, done = downloader.next_chunk()
-    return destination
-
 
 async def create_drive_folder(drive_service, folder_name, parent_folder_id):
     try:
