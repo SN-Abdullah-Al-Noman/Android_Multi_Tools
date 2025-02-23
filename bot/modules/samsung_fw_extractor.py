@@ -150,10 +150,10 @@ async def samsung_fw_extract(client, message):
 
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
     if version:
-        banner = f"{banner}\n<b>Update found:</b>\n{version}\n\nFirmware download started."
+        banner = f"{banner}\n<b>Update found:</b>\n{version}\n\n<b>Firmware download started.</b>"
         status = await edit_message(status, banner)
     else:
-        banner = f"\n{banner}<b>MODEL or region not found</b>"
+        banner = f"\n{banner}<b>MODEL or region not found.</b>"
         status = await edit_message(status, banner)
         return
         
