@@ -12,8 +12,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
-from googleapiclient.http import MediaIoBaseUpload
-from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.http import MediaIoBaseUpload, MediaIoBaseDownload
 
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
@@ -26,19 +25,16 @@ DOWNLOAD_DIR = "work"
 async def send_message(message, text):
     return await message.reply(text=text, quote=True)
 
-
 async def edit_message(message, text):
     try:
         await message.edit(text=text)
     except Exception as e:
         print(f"Failed to edit message: {e}")
 
-
 def new_task(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         return bot_loop.create_task(func(*args, **kwargs))
-
     return wrapper
 
 def load_credentials():
@@ -55,9 +51,7 @@ def load_credentials():
                 raise Exception(f"Error refreshing credentials: {e}")
         else:
             raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
-
     return credentials
-
 
 def extract_file_id_from_link(link):
     parsed_url = urlparse(link)
@@ -68,7 +62,6 @@ def extract_file_id_from_link(link):
         elif "/d/" in parsed_url.path:
             return parsed_url.path.split("/d/")[1].split("/")[0]
     raise ValueError("Invalid Google Drive link format")
-
 
 async def download_from_google_drive(link, destination):
     credentials = load_credentials()
@@ -83,7 +76,6 @@ async def download_from_google_drive(link, destination):
             status, done = downloader.next_chunk()
     return destination
 
-
 async def create_drive_folder(drive_service, folder_name, parent_folder_id):
     try:
         folder_metadata = {
@@ -95,7 +87,6 @@ async def create_drive_folder(drive_service, folder_name, parent_folder_id):
         return folder.get('id')
     except Exception as e:
         raise Exception(f"Error creating folder in Google Drive: {e}")
-
 
 @new_task
 async def upload_in_drive(file_path, drive_folder_id):
@@ -117,7 +108,6 @@ async def upload_in_drive(file_path, drive_folder_id):
     except Exception as e:
         raise Exception(f"Error uploading file to Google Drive: {e}")
 
-
 def run_command(command):
     try:
         result = subprocess.run(command, capture_output=True, text=True, shell=True, check=True)
@@ -125,7 +115,6 @@ def run_command(command):
     except subprocess.CalledProcessError as e:
         print(f"Command failed: {e.stderr.strip()}")
         return None
-
 
 @new_task
 async def samsung_fw_extract(client, message):
@@ -141,7 +130,7 @@ async def samsung_fw_extract(client, message):
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await send_message(message, banner)
 
-    banner = f"\n<b>{banner}\nFetching Latest Firmware.</b>"
+    banner = f"{banner}\n<b>Fetching Latest Firmware.</b>"
     await edit_message(status, banner)
 
     version = run_command(f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} checkupdate 2>/dev/null")
@@ -159,7 +148,7 @@ async def samsung_fw_extract(client, message):
 
     download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O {DOWNLOAD_DIR}"
     if run_command(download_command) is None:
-        banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL ?</b>"
+        banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL?</b>"
         await edit_message(status, banner)
         return
 
@@ -176,19 +165,15 @@ async def samsung_fw_extract(client, message):
         else:
             file_size = os.path.getsize(f"{DOWNLOAD_DIR}/firmware.zip")
             file_size_mb = file_size / (1024 * 1024)
-            banner = f"{banner}\n<b>Firmware decrypted. Firmware size is :</b> {file_size_mb:.2f} 
+            banner = f"{banner}\n<b>Firmware decrypted. Firmware size is :</b> {file_size_mb:.2f}"
             await edit_message(status, banner)
         os.remove(file_path)
     else:
         banner = f"{banner}\n<b>No encrypted file found for decryption.</b>"
-        edit_message(status, banner)
+        await edit_message(status, banner)
         return
 
-    banner = f"{banner}\nFirmware size is.</b>"
-    await edit_message(status, banner)
-
-
-    banner = f"\n{banner}\n\n<b>Step 1:</b> Extracting firmware zip."
+    banner = f"{banner}\n<b>Step 1:</b> Extracting firmware zip."
     await edit_message(status, banner)
     try:
         subprocess.run('7z x firmware.zip && rm -rf firmware.zip && rm -rf *.txt && for file in *.md5; do mv -- "$file" "${file%.md5}"; done', shell=True, cwd=DOWNLOAD_DIR)
@@ -197,11 +182,11 @@ async def samsung_fw_extract(client, message):
         subprocess.run('rm -f CSC*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -f HOME*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
-        banner = f"\n{banner}\nFailed: {e}."
+        banner = f"{banner}\nFailed: {e}."
         await edit_message(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 2:</b> Extracting tar files."
+    banner = f"{banner}\n<b>Step 2:</b> Extracting tar files."
     await edit_message(status, banner)
     try:
         subprocess.run('for file in *.tar; do tar -xvf "$file"; done', shell=True, cwd=DOWNLOAD_DIR)
@@ -209,31 +194,31 @@ async def samsung_fw_extract(client, message):
         subprocess.run('rm -rf *.tar', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf meta-data', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
-        banner = f"\n{banner}\n{e}."
+        banner = f"{banner}\n{e}."
         await edit_message(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 3:</b> Extracting lz4 files."
+    banner = f"{banner}\n<b>Step 3:</b> Extracting lz4 files."
     await edit_message(status, banner)
     try:
         subprocess.run('for file in *.lz4; do lz4 -d "$file" "${file%.lz4}"; done', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
-        banner = f"\n{banner}\n{e}."
+        banner = f"{banner}\n{e}."
         await edit_message(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 4:</b> Converting sparse super.img to raw super.img."
+    banner = f"{banner}\n<b>Step 4:</b> Converting sparse super.img to raw super.img."
     await edit_message(status, banner)
     try:
         subprocess.run("simg2img super.img super_raw.img", shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run("mv super_raw.img super.img", shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
-        banner = f"\n{banner}\n{e}."
+        banner = f"{banner}\n{e}."
         await edit_message(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 5:</b> Extracting all partitions from super.img"
+    banner = f"{banner}\n<b>Step 5:</b> Extracting all partitions from super.img."
     await edit_message(status, banner)
     try:
         subprocess.run('lpunpack super.img', shell=True, cwd=DOWNLOAD_DIR)
@@ -241,11 +226,11 @@ async def samsung_fw_extract(client, message):
         subprocess.run('rm -rf vendor.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
-        banner = f"\n{banner}\n{e}."
+        banner = f"{banner}\n{e}."
         await edit_message(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 6:</b> Compressing all img to xz level 9."
+    banner = f"{banner}\n<b>Step 6:</b> Compressing all img to xz level 9."
     await edit_message(status, banner)
     try:
         subprocess.run('rm -rf boot.img', shell=True, cwd=DOWNLOAD_DIR)
@@ -254,11 +239,11 @@ async def samsung_fw_extract(client, message):
         subprocess.run('for i in *.img; do 7z a -mx9 "${i%.*}.img.xz" "$i"; done && rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         subprocess.run('rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
-        banner = f"\n{banner}\n{e}."
+        banner = f"{banner}\n{e}."
         await edit_message(status, banner)
         return
 
-    banner = f"\n{banner}\n<b>Step 7:</b> Creating folder in Google Drive."
+    banner = f"{banner}\n<b>Step 7:</b> Creating folder in Google Drive."
     await edit_message(status, banner)
 
     credentials = None
@@ -275,14 +260,14 @@ async def samsung_fw_extract(client, message):
     drive_service = build('drive', 'v3', credentials=credentials)
     drive_folder_id = await create_drive_folder(drive_service, version, DRIVE_FOLDER_ID)
 
-    banner = f"\n{banner}\n<b>Step 8:</b> Uploading all files in google drive."
+    banner = f"{banner}\n<b>Step 8:</b> Uploading all files to Google Drive."
     await edit_message(status, banner)
     for file_name in os.listdir(DOWNLOAD_DIR):
         if file_name.endswith('.xz'):
             file_path = os.path.join(DOWNLOAD_DIR, file_name)
             await upload_in_drive(file_path, drive_folder_id)
 
-    banner = f"\n{banner}\n\n<b>Upload Completed.</b>\nFolder link: https://drive.google.com/drive/folders/{drive_folder_id}"
+    banner = f"{banner}\n\n<b>Upload Completed.</b>\nFolder link: https://drive.google.com/drive/folders/{drive_folder_id}"
     await edit_message(status, banner)
     subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
 
