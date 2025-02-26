@@ -131,7 +131,7 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     try:
         if "drive.google.com" in link:
-            file_path = os.path.join(DOWNLOAD_DIR, 'fw.zip')
+            file_path = os.path.join(DOWNLOAD_DIR, 'super.img')
             await download_from_google_drive(link, file_path)
         else:
             subprocess.run(['wget', '-O', 'super.img', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{link}'], cwd=DOWNLOAD_DIR)
@@ -143,22 +143,22 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\nSuper.img download complete.\n"
     await editMessage(status, banner)
     
-    # banner = f"\n{banner}\n<b>Step 01:</b> Converting sparse super.img to raw super.img."
-    # await editMessage(status, banner)
-    # try:
-        # subprocess.run("simg2img super.img super_raw.img", shell=True, cwd=DOWNLOAD_DIR)
-        # subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
-        # subprocess.run("mv super_raw.img super.img", shell=True, cwd=DOWNLOAD_DIR)
-    # except Exception as e:
+    banner = f"\n{banner}\n<b>Step 01:</b> Converting sparse super.img to raw super.img."
+    await editMessage(status, banner)
+    try:
+        subprocess.run("simg2img super.img super_raw.img", shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run("rm -rf super.img", shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run("mv super_raw.img super.img", shell=True, cwd=DOWNLOAD_DIR)
+    except Exception as e:
             banner = f"\n{banner}\n{e}."
-            # await editMessage(status, banner)
-            # return
+            await editMessage(status, banner)
+            return
 
     banner = f"\n{banner}\n<b>Step 02:</b> Extracting all partitions from super.img"
     await editMessage(status, banner)
     try:
         subprocess.run('lpunpack super.img', shell=True, cwd=DOWNLOAD_DIR)
-        # subprocess.run('rm -rf super.img', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf super.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf vendor.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
@@ -174,7 +174,7 @@ async def samsung_fw_extract(client, message):
         subprocess.run('rm -rf prism.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('for i in *.img; do 7z a -mx9 "${i%.*}.img.xz" "$i"; done && rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
-        # subprocess.run('rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
         banner = f"\n{banner}\n{e}."
         await editMessage(status, banner)
         return
@@ -205,6 +205,6 @@ async def samsung_fw_extract(client, message):
 
     banner = f"\n{banner}\n\n<b>Upload Completed.</b>\nFolder link: https://drive.google.com/drive/folders/{drive_folder_id}"
     await editMessage(status, banner)
-    # subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
+    subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
 
 bot.add_handler(MessageHandler(samsung_fw_extract, filters=command("super") & CustomFilters.owner))
