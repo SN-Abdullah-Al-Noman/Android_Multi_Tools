@@ -11,7 +11,7 @@ from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.button_build import ButtonMaker
 from .helper.telegram_helper.message_utils import sendMessage, editMessage
-from .modules import samsung_fw_extractor, users
+from .modules import samsung_fw_extractor, super
 
 
 @bot.on_message(filters.command("start"))
