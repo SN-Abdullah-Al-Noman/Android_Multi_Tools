@@ -34,7 +34,7 @@ async def git_push_kernel_source(client, message):
     banner = "<b>Samsung Kernel to Git Push Bot By Al Noman</b>\n"
     status = await sendMessage(message, banner)
 
-    banner += "\n<b>Configuring git.</b>"
+    banner += "\n<b>Configuring git credentials.</b>"
     await editMessage(status, banner)
 
     subprocess.run(["git", "config", "--global", "user.email", GIT_EMAIL])
@@ -56,7 +56,7 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
 
 
-    banner += "\n<b>Initializing repository.</b>"
+    banner += "\n<b>Initializing git repository.</b>"
     await editMessage(status, banner)
     subprocess.run(["git", "init"], cwd=f"{GIT_BRANCH_NAME}")
     subprocess.run(["git", "add", "."], cwd=f"{GIT_BRANCH_NAME}")
