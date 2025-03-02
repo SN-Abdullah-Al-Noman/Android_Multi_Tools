@@ -49,11 +49,6 @@ async def git_push_kernel_source(client, message):
     banner += " ☑️"
     await editMessage(status, banner)
 
-    banner += "\n<b>Extracting kernel source.</b>"
-    await editMessage(status, banner)
-    
-    os.makedirs(, exist_ok=True)
-
     subprocess.run(f"7z x '{file_path}' -o'{GIT_BRANCH_NAME}' -y", shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     os.remove(file_path)
     banner += " ☑️"
@@ -63,6 +58,15 @@ async def git_push_kernel_source(client, message):
     if "Kernel.tar.gz" in files and "Platform.tar.gz" in files:
         await editMessage(status, "<b>Error:</b> Not a valid kernel source.")
         return
+
+    banner += f"\n<b>Extracting kernel source.</b>"
+    await editMessage(status, banner)
+    extract_path = file_path.replace(".zip", "")
+    os.makedirs(extract_path, exist_ok=True)
+    subprocess.run(f"7z x '{file_path}' -o'{extract_path}' -y", shell=True)
+    os.remove(file_path)
+    banner += " ☑️"
+    await editMessage(status, banner)
 
     banner += "\n<b>Configuring git credentials.</b>"
     await editMessage(status, banner)
