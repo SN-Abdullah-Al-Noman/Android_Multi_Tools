@@ -8,8 +8,14 @@ from bot import bot, bot_loop
 from bot.helper.telegram_helper.filters import CustomFilters
 
 
-async def sendMessage(message, text):
-    return await message.reply(text=text, quote=True)
+async def sendMessage(message, text, photo=None):
+    try:
+        if photo:
+            return await message.reply_photo(photo=photo, caption=text, quote=True)
+        else:
+            return await message.reply(text=text, quote=True)
+    except:
+        pass
 
 
 async def editMessage(message, text):
