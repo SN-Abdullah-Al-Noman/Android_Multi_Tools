@@ -80,7 +80,7 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
     subprocess.run(["rm", "-rf", f"{GIT_BRANCH_NAME}"])
     subprocess.run(["mkdir", "-p", f"{GIT_BRANCH_NAME}"])
-    subprocess.run([f"tar", "-xzvf", "{EXTRACT_PATH}/Kernel.tar.gz", "-C", f"{GIT_BRANCH_NAME}"])
+    subprocess.run(["tar", "-xzf", os.path.join(EXTRACT_PATH, "Kernel.tar.gz"), "-C", GIT_BRANCH_NAME])
     banner += " ☑️"
     await editMessage(status, banner)
 
