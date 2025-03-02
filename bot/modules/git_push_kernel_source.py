@@ -80,7 +80,7 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
     subprocess.run(["rm", "-rf", f"{GIT_BRANCH_NAME}"])
     subprocess.run(["mkdir", "-p", f"{GIT_BRANCH_NAME}"])
-    subprocess.run(["tar", "-xzvf", "EXTRACT_PATH/Kernel.tar.gz", "-C", f"{GIT_BRANCH_NAME}"])
+    subprocess.run([f"tar", "-xzvf", "{EXTRACT_PATH}/Kernel.tar.gz", "-C", f"{GIT_BRANCH_NAME}"])
     banner += " ☑️"
     await editMessage(status, banner)
 
@@ -100,7 +100,7 @@ async def git_push_kernel_source(client, message):
         await editMessage(status, banner)
         subprocess.run(["rm", "-rf", "Platform"])
         subprocess.run(["mkdir", "-p", "Platform"])
-        subprocess.run(["tar", "-xzvf", "EXTRACT_PATH/Platform.tar.gz", "-C", "Platform"])
+        subprocess.run([f"tar", "-xzvf", "{EXTRACT_PATH}/Platform.tar.gz", "-C", "Platform"])
         
         if os.path.exists("Platform/vendor/mediatek/kernel_modules/connectivity"):
             subprocess.run(f"cp -r Platform/vendor/mediatek/kernel_modules/connectivity/* {GIT_BRANCH_NAME}/drivers/misc/mediatek/connectivity/", shell=True)
