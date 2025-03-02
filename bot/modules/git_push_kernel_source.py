@@ -55,8 +55,7 @@ async def git_push_kernel_source(client, message):
     os.makedirs(extract_path, exist_ok=True)
     subprocess.run(f"7z x '{file_path}' -o'{extract_path}' -y", shell=True)
     os.remove(file_path)
-
-    banner += f"<b>File extracted successfully.</b>\nPath: <code>{extract_path}</code>\nBranch: <code>{GIT_BRANCH_NAME}</code>\n"
+    banner += " ☑️"
     await editMessage(status, banner)
 
     banner += f"\n<b>Configuring git credentials.</b>"
@@ -70,7 +69,6 @@ async def git_push_kernel_source(client, message):
     banner += " ☑️"
     await editMessage(status, banner)
 
-
     banner += f"\n<b>Extracting kernel source.</b>"
     await editMessage(status, banner)
     subprocess.run(["rm", "-rf", f"{GIT_BRANCH_NAME}"])
@@ -79,7 +77,6 @@ async def git_push_kernel_source(client, message):
     subprocess.run(["clear"])
     banner += " ☑️"
     await editMessage(status, banner)
-
 
     banner += f"\n<b>Initializing git repository.</b>"
     await editMessage(status, banner)
@@ -90,7 +87,6 @@ async def git_push_kernel_source(client, message):
     subprocess.run(["clear"])
     banner += " ☑️"
     await editMessage(status, banner)
-
 
     if os.path.exists(f"{GIT_BRANCH_NAME}/drivers/misc/mediatek/connectivity"):
         banner += "\n<b>Extracting & adding kernel drivers.</b>"
@@ -118,7 +114,6 @@ async def git_push_kernel_source(client, message):
             banner += " ☑️"
             await editMessage(status, banner)
 
-
     banner += f"\n<b>Disabling auto add localversion.</b>"
     await editMessage(status, banner)
     DEF_CONFIG = subprocess.run("awk '/make .*defconfig/ {print $NF}' build_kernel.sh", shell=True, capture_output=True, text=True, cwd=f"{GIT_BRANCH_NAME}").stdout.strip()
@@ -129,7 +124,6 @@ async def git_push_kernel_source(client, message):
     banner += " ☑️"
     await editMessage(status, banner)
 
-
     banner += f"\n<b>Adding kernel information.</b>"
     await editMessage(status, banner)
     subprocess.run(f'sed -i "s|^CONFIG_LOCALVERSION=.*|CONFIG_LOCALVERSION=\\"Atrocious Enforcing Kernel V:1 {GIT_BRANCH_NAME}\\"|" 'f'arch/arm64/configs/{DEF_CONFIG}', shell=True, cwd=f"{GIT_BRANCH_NAME}")
@@ -137,7 +131,6 @@ async def git_push_kernel_source(client, message):
     subprocess.run(["git", "commit", "-m", "Kernel Information."], cwd=f"{GIT_BRANCH_NAME}")
     banner += " ☑️"
     await editMessage(status, banner)
-
 
     banner += f"\n<b>Pushing repository to GitHub.</b>"
     await editMessage(status, banner)
