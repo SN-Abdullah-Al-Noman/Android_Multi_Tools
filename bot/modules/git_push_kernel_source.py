@@ -56,7 +56,7 @@ async def git_push_kernel_source(client, message):
     subprocess.run(f"7z x '{file_path}' -o'{extract_path}' -y", shell=True)
     os.remove(file_path)
 
-    banner += f"<b>File extracted successfully.</b>\nPath: <code>{extract_path}</code>\nBranch: <code>{GIT_BRANCH_NAME}</code>")
+    banner += f"<b>File extracted successfully.</b>\nPath: <code>{extract_path}</code>\nBranch: <code>{GIT_BRANCH_NAME}</code>\n"
     await editMessage(status, banner)
 
     banner += f"\n<b>Configuring git credentials.</b>"
