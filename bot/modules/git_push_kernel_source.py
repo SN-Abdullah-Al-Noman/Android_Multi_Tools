@@ -40,8 +40,12 @@ async def git_push_kernel_source(client, message):
     GIT_REMOTE_ORIGIN = "https://github.com/SN-Abdullah-Al-Noman/Samsung_Kernel_Sources.git"
     GIT_ACCESS_TOKEN = "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"
     
-    banner = f"<b>Samsung Kernel to Git Push Bot By Al Noman</b>\n"
-    status = await sendMessage(message, banner)
+    # banner = f"<b>Samsung Kernel to Git Push Bot By Al Noman</b>\n"
+    # status = await sendMessage(message, banner)
+    banner = "<b>Samsung Kernel to Git Push Bot By Al Noman</b>\n"
+    photo_path = os.path.join(os.getcwd(), "git_code_fusion.jpg")
+    status = await sendMessage(message, banner, photo_path)
+    
     
     banner += f"\n<b>Downloading kernel source.</b>"
     await editMessage(status, banner)
