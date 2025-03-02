@@ -58,6 +58,12 @@ async def git_push_kernel_source(client, message):
     banner += " ☑️"
     await editMessage(status, banner)
 
+    files = os.listdir(extract_path)
+    if "Kernel.tar.gz" in files and "Platform.tar.gz" in files:
+        banner += f"\n<b>Not a valid kernel source.</b>"
+        await editMessage(status, banner)
+        return
+
     banner += f"\n<b>Configuring git credentials.</b>"
     await editMessage(status, banner)
 
