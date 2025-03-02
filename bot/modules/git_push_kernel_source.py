@@ -64,7 +64,6 @@ async def git_push_kernel_source(client, message):
     banner += " ☑️"
     await editMessage(status, banner)
     
-    
     banner += f"\n<b>Configuring git credentials.</b>"
     await editMessage(status, banner)
 
@@ -82,7 +81,6 @@ async def git_push_kernel_source(client, message):
     subprocess.run(["rm", "-rf", f"{GIT_BRANCH_NAME}"])
     subprocess.run(["mkdir", "-p", f"{GIT_BRANCH_NAME}"])
     subprocess.run(["tar", "-xzvf", "EXTRACT_PATH/Kernel.tar.gz", "-C", f"{GIT_BRANCH_NAME}"])
-    subprocess.run(["clear"])
     banner += " ☑️"
     await editMessage(status, banner)
 
@@ -93,7 +91,6 @@ async def git_push_kernel_source(client, message):
     subprocess.run(["git", "add", "."], cwd=f"{GIT_BRANCH_NAME}")
     subprocess.run(["git", "commit", "-m", f"Initial commit {GIT_BRANCH_NAME}"], cwd=f"{GIT_BRANCH_NAME}")
     subprocess.run(["git", "branch", "-M", f"{GIT_BRANCH_NAME}"], cwd=f"{GIT_BRANCH_NAME}")
-    subprocess.run(["clear"])
     banner += " ☑️"
     await editMessage(status, banner)
 
