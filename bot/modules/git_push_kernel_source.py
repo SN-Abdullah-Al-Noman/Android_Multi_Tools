@@ -40,16 +40,15 @@ async def git_push_kernel_source(client, message):
     GIT_REMOTE_ORIGIN = "https://github.com/SN-Abdullah-Al-Noman/Samsung_Kernel_Sources.git"
     GIT_ACCESS_TOKEN = "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"
     
-    banner = "<b>Samsung Kernel to Git Push Bot By Al Noman</b>\n"
+    banner = f"<b>Samsung Kernel to Git Push Bot By Al Noman</b>\n"
     status = await sendMessage(message, banner)
     
-    banner += "\n<b>Downloading kernel source.</b>"
+    banner += f"\n<b>Downloading kernel source.</b>"
     await editMessage(status, banner)
     file_path = await client.download_media(message.reply_to_message.document)
     banner += " ☑️"
     await editMessage(status, banner)
 
-    
     banner += f"\n<b>Extracting kernel source.</b>"
     await editMessage(status, banner)
     extract_path = file_path.replace(".zip", "")
@@ -57,7 +56,7 @@ async def git_push_kernel_source(client, message):
     subprocess.run(f"7z x '{file_path}' -o'{extract_path}' -y", shell=True)
     os.remove(file_path)
 
-    banner += "f"<b>File extracted successfully.</b>\nPath: <code>{extract_path}</code>\nBranch: <code>{GIT_BRANCH_NAME}</code>")
+    banner += f"<b>File extracted successfully.</b>\nPath: <code>{extract_path}</code>\nBranch: <code>{GIT_BRANCH_NAME}</code>")
     await editMessage(status, banner)
 
     banner += f"\n<b>Configuring git credentials.</b>"
@@ -72,7 +71,7 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
 
 
-    banner += "\n<b>Extracting kernel source.</b>"
+    banner += f"\n<b>Extracting kernel source.</b>"
     await editMessage(status, banner)
     subprocess.run(["rm", "-rf", f"{GIT_BRANCH_NAME}"])
     subprocess.run(["mkdir", "-p", f"{GIT_BRANCH_NAME}"])
@@ -82,7 +81,7 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
 
 
-    banner += "\n<b>Initializing git repository.</b>"
+    banner += f"\n<b>Initializing git repository.</b>"
     await editMessage(status, banner)
     subprocess.run(["git", "init"], cwd=f"{GIT_BRANCH_NAME}")
     subprocess.run(["git", "add", "."], cwd=f"{GIT_BRANCH_NAME}")
@@ -107,7 +106,7 @@ async def git_push_kernel_source(client, message):
             banner += " ☑️"
             await editMessage(status, banner)
         
-            banner += "\n<b>Updating driver import locations.</b>"
+            banner += f"\n<b>Updating driver import locations.</b>"
             await editMessage(status, banner)
             subprocess.run(f'find "{GIT_BRANCH_NAME}/drivers/misc/mediatek/connectivity" -type f -exec sed -i '
                 '-e "s|vendor/mediatek/kernel_modules/connectivity/|$(srctree)/drivers/misc/mediatek/connectivity/|g" '
@@ -120,7 +119,7 @@ async def git_push_kernel_source(client, message):
             await editMessage(status, banner)
 
 
-    banner += "\n<b>Disabling auto add localversion.</b>"
+    banner += f"\n<b>Disabling auto add localversion.</b>"
     await editMessage(status, banner)
     DEF_CONFIG = subprocess.run("awk '/make .*defconfig/ {print $NF}' build_kernel.sh", shell=True, capture_output=True, text=True, cwd=f"{GIT_BRANCH_NAME}").stdout.strip()
     subprocess.run(f'sed -i "/^CONFIG_LOCALVERSION_AUTO=/c\\CONFIG_LOCALVERSION_AUTO=n" arch/arm64/configs/{DEF_CONFIG}', shell=True, cwd=f"{GIT_BRANCH_NAME}")
@@ -131,7 +130,7 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
 
 
-    banner += "\n<b>Adding kernel information.</b>"
+    banner += f"\n<b>Adding kernel information.</b>"
     await editMessage(status, banner)
     subprocess.run(f'sed -i "s|^CONFIG_LOCALVERSION=.*|CONFIG_LOCALVERSION=\\"Atrocious Enforcing Kernel V:1 {GIT_BRANCH_NAME}\\"|" 'f'arch/arm64/configs/{DEF_CONFIG}', shell=True, cwd=f"{GIT_BRANCH_NAME}")
     subprocess.run(["git", "add", "."], cwd=f"{GIT_BRANCH_NAME}")
@@ -140,7 +139,7 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
 
 
-    banner += "\n<b>Pushing repository to GitHub.</b>"
+    banner += f"\n<b>Pushing repository to GitHub.</b>"
     await editMessage(status, banner)
     subprocess.run(["git", "remote", "add", "origin", f"{GIT_REMOTE_ORIGIN}"], cwd=f"{GIT_BRANCH_NAME}")
     subprocess.run(["git", "push", "-u", "origin", f"{GIT_BRANCH_NAME}"], cwd=f"{GIT_BRANCH_NAME}")
