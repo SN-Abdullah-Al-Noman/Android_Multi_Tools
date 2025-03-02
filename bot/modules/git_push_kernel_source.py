@@ -64,23 +64,22 @@ async def git_push_kernel_source(client, message):
     banner += " ☑️"
     await editMessage(status, banner)
     
-    banner += f"\n<b>Configuring git credentials.</b>"
-    await editMessage(status, banner)
-
-    subprocess.run(["git", "config", "--global", "user.email", GIT_EMAIL])
-    subprocess.run(["git", "config", "--global", "user.name", GIT_USERNAME])
-    subprocess.run(["git", "config", "--global", "init.defaultBranch", GIT_BRANCH_NAME])
-    subprocess.run(["git", "config", "--global", "credential.helper", "store"])
-    subprocess.run(f'printf "\\nhttps://{GIT_USERNAME}:{GIT_ACCESS_TOKEN}@github.com" >> ~/.git-credentials', shell=True, check=True)
-    banner += " ☑️"
-    await editMessage(status, banner)
-
 
     banner += f"\n<b>Extracting kernel source.</b>"
     await editMessage(status, banner)
     subprocess.run(["rm", "-rf", f"{GIT_BRANCH_NAME}"])
     subprocess.run(["mkdir", "-p", f"{GIT_BRANCH_NAME}"])
     subprocess.run(["tar", "-xzf", os.path.join(EXTRACT_PATH, "Kernel.tar.gz"), "-C", GIT_BRANCH_NAME])
+    banner += " ☑️"
+    await editMessage(status, banner)
+
+    banner += f"\n<b>Configuring git credentials.</b>"
+    await editMessage(status, banner)
+    subprocess.run(["git", "config", "--global", "user.email", GIT_EMAIL])
+    subprocess.run(["git", "config", "--global", "user.name", GIT_USERNAME])
+    subprocess.run(["git", "config", "--global", "init.defaultBranch", GIT_BRANCH_NAME])
+    subprocess.run(["git", "config", "--global", "credential.helper", "store"])
+    subprocess.run(f'printf "\\nhttps://{GIT_USERNAME}:{GIT_ACCESS_TOKEN}@github.com" >> ~/.git-credentials', shell=True, check=True)
     banner += " ☑️"
     await editMessage(status, banner)
 
