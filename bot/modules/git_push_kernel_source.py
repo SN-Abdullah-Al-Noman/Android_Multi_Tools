@@ -132,11 +132,11 @@ async def git_push_kernel_source(client, message):
     await editMessage(status, banner)
 
 
-    banner += f"\n<b>Adding kernel information.</b>"
+    banner += f"\n<b>Adding kernel name.</b>"
     await editMessage(status, banner)
     subprocess.run(f'sed -i "s|^CONFIG_LOCALVERSION=.*|CONFIG_LOCALVERSION=\\"Atrocious Enforcing Kernel V:1 {GIT_BRANCH_NAME}\\"|" 'f'arch/arm64/configs/{DEF_CONFIG}', shell=True, cwd=f"{GIT_BRANCH_NAME}")
     subprocess.run(["git", "add", "."], cwd=f"{GIT_BRANCH_NAME}")
-    subprocess.run(["git", "commit", "-m", "Kernel Information."], cwd=f"{GIT_BRANCH_NAME}")
+    subprocess.run(["git", "commit", "-m", "Kernel name."], cwd=f"{GIT_BRANCH_NAME}")
     banner += " ☑️"
     await editMessage(status, banner)
 
