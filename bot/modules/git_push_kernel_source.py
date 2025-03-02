@@ -99,8 +99,8 @@ async def git_push_kernel_source(client, message):
         await editMessage(status, banner)
         subprocess.run(["rm", "-rf", "Platform"])
         subprocess.run(["mkdir", "-p", "Platform"])
-        subprocess.run(["tar", "-xzf", os.path.join(EXTRACT_PATH, "Platform.tar.gz"), "-C", Platform])
-        
+        subprocess.run(["tar", "-xzf", os.path.join(EXTRACT_PATH, "Platform.tar.gz"), "-C", "Platform"])
+
         if os.path.exists("Platform/vendor/mediatek/kernel_modules/connectivity"):
             subprocess.run(f"cp -r Platform/vendor/mediatek/kernel_modules/connectivity/* {GIT_BRANCH_NAME}/drivers/misc/mediatek/connectivity/", shell=True)
             subprocess.run(["git", "add", "."], cwd=f"{GIT_BRANCH_NAME}")
