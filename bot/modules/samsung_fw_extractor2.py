@@ -193,6 +193,7 @@ async def samsung_fw_extract(client, message):
     try:
         subprocess.run('lpunpack super.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf super.img', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf system_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf vendor.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('rm -rf system.img', shell=True, cwd=DOWNLOAD_DIR)
