@@ -11,7 +11,7 @@ on:
       OTA_FILE_URL:
         description: 'OTA_FILE_URL to download firmware'
         required: true
-        default: '"http://fota-secure-dn.ospserver.net:80/firmware/EUX/SM-S906B/nspx/104d0a8a8f404c62a52e908c8d18d437.bin?px-time=68050eef&px-hash=01c0f4875671edfe1543abee3fe76746&px-wid=5118064-WSA250417151244&px-wctime=2025-04-17%2015:12:44&px-cc=EUX&px-mn=SM-S906B&px-aid=EUX&px-nb=UGtezEZ854jbmFcvWGxLEA==&px-rmtime=2025-04-17%2015:14:52"'
+        default: 'http://fota-secure-dn.ospserver.net:80/firmware/EUX/SM-S906B/nspx/104d0a8a8f404c62a52e908c8d18d437.bin?px-time=68050eef&px-hash=01c0f4875671edfe1543abee3fe76746&px-wid=5118064-WSA250417151244&px-wctime=2025-04-17%2015:12:44&px-cc=EUX&px-mn=SM-S906B&px-aid=EUX&px-nb=UGtezEZ854jbmFcvWGxLEA==&px-rmtime=2025-04-17%2015:14:52'
 
 jobs:
   build:
@@ -39,7 +39,7 @@ jobs:
       
       - name: Downloading ota file.
         run: |
-           cd && sudo rm -rf ota && sudo mkdir ota && cd ota && wget -O ota_update.bin --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0" ${{ github.event.inputs.OTA_FILE_URL }}
+           cd && sudo rm -rf ota && sudo mkdir ota && cd ota && sudo wget -O ota_update.bin --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0" "${{ github.event.inputs.OTA_FILE_URL }}"
 
       - name: Extracting ota file.
         run: |
