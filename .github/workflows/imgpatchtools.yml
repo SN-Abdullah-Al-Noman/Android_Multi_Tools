@@ -6,7 +6,7 @@ on:
       FIRMWARE_FILE_URL:
         description: 'FIRMWARE_FILE_URL to download firmware'
         required: true
-        default: 'wwwww'
+        default: 'https://24x7-mltb.eu.org/0:findpath?id=1RxNhgJKrkwhmvL62NThm7X6HzfGurOHF'
 
       OTA_FILE_URL:
         description: 'OTA_FILE_URL to download firmware'
@@ -18,11 +18,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1️⃣ Checkout code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: 2️⃣ Installing packages.
+      - name: Installing packages.
         run: |
           cd && sudo apt-get update && sudo apt install p7zip-full lz4 android-sdk-libsparse-utils wget python3 -y git zlib1g-dev libbz2-dev libssl-dev && sudo pip3 install liblp
 
+      - name: Downloading firmware.
+        run: |
+           cd && wget -O firmware.zip --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0" ${{ github.event.inputs.FIRMWARE_FILE_URL }}
+
+      - name: Extracting firmware.
+        run: |
+           cd && sudo 7z x firmware.zip && sudo rm -rf *.zip && sudo rm -rf *.txt && for file in *.md5; do sudo mv -- "$file" "${file%.md5}"; done && for file in *.tar; do sudo tar -xvf "$file"; done && sudo rm -rf *.tar && sudo rm -rf *.pit && sudo rm -rf meta-data && for file in *.lz4; do sudo lz4 -d "$file" "${file%.lz4}"; done && sudo rm -rf *.lz4 && sudo rm -rf *.bin && sudo find . -type f ! -name "*.img" -exec sudo rm -f {} + && sudo rm -rf boot.img cache.img dtbo.img ldfw.img omr.img recovery.img ssp.img tzar.img tzfw.img META-INF tzsw.img vbmeta.img vbmeta_system.img vendor_boot.img && sudo simg2img super.img super_raw.img && sudo rm -rf super.img && sudo mv super_raw.img super.img && sudo lpunpack super.img && sudo rm -rf super.img
+
+      - name: File lis.
+        run: |
+           cd && ls
       
