@@ -24,6 +24,8 @@ jobs:
       - name: Installing packages.
         run: |
           sudo echo "deb http://security.ubuntu.com/ubuntu xenial-security main" | sudo tee -a /etc/apt/sources.list
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32
+          sudo apt-get update -y
           sudo apt update -y
           sudo apt install libssl1.0.0. -y
           cd && sudo apt-get update && sudo apt install p7zip-full lz4 android-sdk-libsparse-utils wget python3 git zlib1g-dev libbz2-dev libssl-dev -y && sudo pip3 install liblp
