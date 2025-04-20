@@ -37,3 +37,10 @@ jobs:
         run: |
            cd && ls
       
+      - name: Downloading ota file.
+        run: |
+           cd && sudo rm -rf ota && sudo mkdir ota && cd ota && wget -O ota_update.bin --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0" ${{ github.event.inputs.OTA_FILE_URL }}
+
+      - name: Extracting ota file.
+        run: |
+           cd && cd ota && sudo 7z x ota_update.bin && sudo find . -type f ! \( -name "*.dat" -o -name "*.list" -o -name "*.img" \) -exec sudo rm -f {} + && sudo rm -rf boot.img cache.img dtbo.img ldfw.img omr.img recovery.img ssp.img tzar.img tzfw.img META-INF tzsw.img vbmeta.img vbmeta_system.img vendor_boot.img && sudo find . -maxdepth 1 -type f -exec sudo mv {} "$HOME" \; && cd && sudo rm -rf ota
