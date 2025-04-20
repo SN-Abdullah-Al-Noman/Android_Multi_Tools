@@ -32,10 +32,6 @@ jobs:
       - name: Extracting firmware.
         run: |
            cd && sudo 7z x firmware.zip && sudo rm -rf *.zip && sudo rm -rf *.txt && for file in *.md5; do sudo mv -- "$file" "${file%.md5}"; done && for file in *.tar; do sudo tar -xvf "$file"; done && sudo rm -rf *.tar && sudo rm -rf *.pit && sudo rm -rf meta-data && for file in *.lz4; do sudo lz4 -d "$file" "${file%.lz4}"; done && sudo rm -rf *.lz4 && sudo rm -rf *.bin && sudo find . -type f ! -name "*.img" -exec sudo rm -f {} + && sudo rm -rf boot.img cache.img dtbo.img ldfw.img omr.img recovery.img ssp.img tzar.img tzfw.img META-INF tzsw.img vbmeta.img vbmeta_system.img vendor_boot.img && sudo simg2img super.img super_raw.img && sudo rm -rf super.img && sudo mv super_raw.img super.img && sudo lpunpack super.img && sudo rm -rf super.img
-
-      - name: File lis.
-        run: |
-           cd && ls
       
       - name: Downloading ota file.
         run: |
@@ -48,3 +44,7 @@ jobs:
       - name: File lis.
         run: |
            cd && ls
+
+      - name: Patching img.
+        run: |
+           sudo git clone https://github.com/SN-Abdullah-Al-Noman/imgpatchtools && sudo find . -maxdepth 1 -type f -exec sudo mv {} imgpatchtools/ \; && cd imgpatchtools && sudo chmod +x BlockImageUpdate && sudo ./BlockImageUpdate odm.img odm.transfer.list odm.new.dat odm.patch.dat
