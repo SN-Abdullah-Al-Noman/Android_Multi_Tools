@@ -23,7 +23,7 @@ jobs:
 
       - name: Installing packages.
         run: |
-          cd && sudo apt-get update && sudo apt install p7zip-full lz4 android-sdk-libsparse-utils wget python3 -y git zlib1g-dev libbz2-dev libssl-dev && sudo pip3 install liblp
+          cd && sudo apt-get update && sudo apt install p7zip-full lz4 android-sdk-libsparse-utils wget python3 git zlib1g-dev libbz2-dev libssl-dev -y && sudo pip3 install liblp
 
       - name: Downloading firmware.
         run: |
