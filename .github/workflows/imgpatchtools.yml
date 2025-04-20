@@ -23,8 +23,7 @@ jobs:
 
       - name: Installing packages.
         run: |
-         sudo wget https://security.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5_amd64.deb && sudo install ./libssl1.0.0_1.0.2n-1ubuntu5_amd64.deb
-         sudo dpkg -i *.deb
+         sudo wget https://security.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5_amd64.deb && sudo dpkg -i *.deb
          cd && sudo apt-get update && sudo apt install p7zip-full lz4 android-sdk-libsparse-utils wget python3 git zlib1g-dev libbz2-dev libssl-dev -y && sudo pip3 install liblp
     
       - name: Downloading firmware.
