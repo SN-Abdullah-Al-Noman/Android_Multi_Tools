@@ -147,10 +147,7 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     try:
         subprocess.run('7z x fw.zip && rm -rf firmware.zip && rm -rf *.txt && for file in *.md5; do mv -- "$file" "${file%.md5}"; done', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -f BL*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -f CP*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -f CSC*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -f HOME*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -f BL*tar.md5 CP*tar.md5 CSC*tar.md5 HOME*tar.md5', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
@@ -161,8 +158,7 @@ async def samsung_fw_extract(client, message):
     try:
         subprocess.run('for file in *.tar; do tar -xvf "$file"; done', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run("find . -type f ! -name 'super.img.lz4' ! -name 'optics.img.lz4' ! -name 'prism.img.lz4' ! -name 'boot.img.lz4' -delete", shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf *.tar', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf meta-data', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf *.tar meta-data', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
         await editMessage(status, banner)
@@ -192,13 +188,7 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     try:
         subprocess.run('lpunpack super.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf super.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf system_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf vendor.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf system.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf product.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf boot.img', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf super.img system_dlkm. img vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
         await editMessage(status, banner)
@@ -207,9 +197,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 6:</b> Compressing all img to xz level 9."
     await editMessage(status, banner)
     try:
-        subprocess.run('rm -rf boot.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf optics.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf prism.img', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf boot.img optics.img prism.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('for i in *.img; do 7z a -mx9 "${i%.*}.img.xz" "$i"; done && rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         subprocess.run('rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
