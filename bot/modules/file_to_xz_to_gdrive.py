@@ -103,45 +103,19 @@ def run_command(command):
 @new_task
 async def samsung_fw_download_upload(client, message):
     args = message.text.split()[1:]
-    if len(args) != 3:
-        await send_message(message, f"<b>Usage:</b> /fw MODEL CSC IMEI")
+    if len(args) != 2:
+        await send_message(message, f"<b>Usage:</b> /fw link file_name folder_name")
         return
 
-    MODEL = args[0]
-    CSC = args[1]
-    IMEI = args[2]
-        
-    if os.path.exists(DOWNLOAD_DIR):
-        shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True)
-    os.makedirs(DOWNLOAD_DIR)
+    LINK = args[0]
+    FOLDER_NAME = args[1]
 
-    download_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} download -v {version} -O {DOWNLOAD_DIR}"
-    if run_command(download_command) is None:
-        banner = f"{banner}\n<b>Something Strange Happened. Did you enter the correct IMEI for your device MODEL?</b>"
-        await edit_message(status, banner)
+    try:
+        subprocess.run(['wget', '-O', f'{FILE_NAME}', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{LINK}'], cwd=DOWNLOAD_DIR)
+    except Exception as e:
+        banner = f"\n{banner}\nFailed: {e}."
+        await editMessage(status, banner)
         return
-
-    files = glob.glob(f"{DOWNLOAD_DIR}/*.enc*")
-    if files:
-        banner = f"{banner}\n<b>Firmware download completed.\nDecrypting firmware.</b>"
-        await edit_message(status, banner)
-        file_path = files[0]
-        decrypt_command = f"python3 -m samloader -m {MODEL} -r {CSC} -i {IMEI} decrypt -v {version} -i {file_path} -o {DOWNLOAD_DIR}/firmware.zip"
-        if run_command(decrypt_command) is None:
-            banner = f"{banner}\n<b>Something Strange Happened.</b>"
-            await edit_message(status, banner)
-            return
-        else:
-            file_size = os.path.getsize(f"{DOWNLOAD_DIR}/firmware.zip")
-            file_size_mb = file_size / (1024 * 1024)
-            banner = f"{banner}\n<b>Firmware decrypted.\nFirmware size is :</b> {file_size_mb:.2f} MB\n"
-            await edit_message(status, banner)
-        os.remove(file_path)
-    else:
-        banner = f"{banner}\n<b>No encrypted file found for decryption.</b>"
-        await edit_message(status, banner)
-        return
-
 
     banner = f"{banner}\nCreating folder in Google Drive."
     await edit_message(status, banner)
@@ -160,10 +134,10 @@ async def samsung_fw_download_upload(client, message):
     drive_service = build('drive', 'v3', credentials=credentials)
     drive_folder_id = await create_drive_folder(drive_service, version, DRIVE_FOLDER_ID)
 
-    banner = f"{banner}\n<b>Step 8:</b> Uploading all files to Google Drive."
+    banner = f"{banner}\nUploading all files to Google Drive."
     await edit_message(status, banner)
     for file_name in os.listdir(DOWNLOAD_DIR):
-        if file_name.endswith('.zip'):
+        if file_name.endswith('.xz'):
             file_path = os.path.join(DOWNLOAD_DIR, file_name)
             await upload_in_drive(file_path, drive_folder_id)
 
