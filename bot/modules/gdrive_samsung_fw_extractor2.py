@@ -197,7 +197,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 6:</b> Compressing all img to xz level 9."
     await editMessage(status, banner)
     try:
-        subprocess.run('rm -rf boot.img optics.img prism.img vendor.img', shell=True, cwd=DOWNLOAD_DIR)
+        subprocess.run('rm -rf boot.img optics.img prism.img system_dlkm.img vendor_dlkm.img vendor.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('for i in *.img; do 7z a -mx9 "${i%.*}.img.xz" "$i"; done && rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         subprocess.run('rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
@@ -233,4 +233,4 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
 
-bot.add_handler(MessageHandler(samsung_fw_extract, filters=command("fw2") & CustomFilters.owner))
+bot.add_handler(MessageHandler(samsung_fw_extract, filters=command("drivefw") & CustomFilters.owner))
