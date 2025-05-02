@@ -11,7 +11,7 @@ from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.button_build import ButtonMaker
 from .helper.telegram_helper.message_utils import sendMessage, editMessage
-from .modules import samsung_fw_extractor, samsung_fw_extractor2, samsung_fw_downlod_upload, super, git_push_kernel_source
+from .modules import file_to_xz_to_gdrive, samsung_fw_extractor, samsung_fw_extractor2, samsung_fw_downlod_upload, super, git_push_kernel_source
 
 
 @bot.on_message(filters.command("start"))
