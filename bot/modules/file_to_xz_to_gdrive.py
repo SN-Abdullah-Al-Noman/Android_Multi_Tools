@@ -145,7 +145,7 @@ async def samsung_fw_download_upload(client, message):
             raise Exception("No valid credentials available. You need to obtain new OAuth tokens.")
 
     drive_service = build('drive', 'v3', credentials=credentials)
-    drive_folder_id = await create_drive_folder(drive_service, version, DRIVE_FOLDER_ID)
+    drive_folder_id = await create_drive_folder(drive_service, f'{FOLDER_NAME}, DRIVE_FOLDER_ID)
 
     banner = f"{banner}\nUploading all files to Google Drive."
     await edit_message(status, banner)
