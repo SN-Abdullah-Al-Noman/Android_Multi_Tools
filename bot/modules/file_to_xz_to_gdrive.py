@@ -159,4 +159,4 @@ async def samsung_fw_download_upload(client, message):
     subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
 
 
-bot.add_handler(MessageHandler(samsung_fw_download_upload, filters=command("sfwdu") & CustomFilters.owner))
+bot.add_handler(MessageHandler(samsung_fw_download_upload, filters=command("fxz") & CustomFilters.owner))
