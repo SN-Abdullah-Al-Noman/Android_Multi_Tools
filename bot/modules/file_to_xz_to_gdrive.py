@@ -111,6 +111,9 @@ async def samsung_fw_download_upload(client, message):
     FILE_NAME = args[1]
     FOLDER_NAME = args[2]
 
+    banner = f"<b>File compressor By Al Noman</b>\n"
+    status = await send_message(message, banner)
+
     banner = f"{banner}\nDownloading file."
     await edit_message(status, banner)
     try:
