@@ -103,13 +103,16 @@ def run_command(command):
 @new_task
 async def samsung_fw_download_upload(client, message):
     args = message.text.split()[1:]
-    if len(args) != 2:
+    if len(args) != 3:
         await send_message(message, f"<b>Usage:</b> /fw link file_name folder_name")
         return
 
     LINK = args[0]
-    FOLDER_NAME = args[1]
+    FILE_NAME = args[1]
+    FOLDER_NAME = args[2]
 
+    banner = f"{banner}\nDownloading file."
+    await edit_message(status, banner)
     try:
         subprocess.run(['wget', '-O', f'{FILE_NAME}', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{LINK}'], cwd=DOWNLOAD_DIR)
     except Exception as e:
@@ -117,6 +120,16 @@ async def samsung_fw_download_upload(client, message):
         await editMessage(status, banner)
         return
 
+    banner = f"{banner}\nCompressing all img to xz level 9."
+    await edit_message(status, banner)
+    try:
+        subprocess.run(f'7z a -mx9 "{FILE_NAME}.xz" "{FILE_NAME}"', shell=True, cwd=DOWNLOAD_DIR)
+    except Exception as e:
+        subprocess.run(f'rm -rf "{FILE_NAME}"', shell=True, cwd=DOWNLOAD_DIR)
+        banner = f"{banner}\n{e}."
+        await edit_message(status, banner)
+        return
+        
     banner = f"{banner}\nCreating folder in Google Drive."
     await edit_message(status, banner)
 
