@@ -119,7 +119,7 @@ async def samsung_fw_extract(client, message):
     link = args[2] if len(args) > 2 else ''
 
     if not folder_name or not link:
-        return await message.reply("Please provide a folder_name and link. Usage: /fw S24 www.sm_fw.com")
+        return await message.reply("Please provide a folder_name and link. Usage: /drivefw S24 www.sm_fw.com")
 
     banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
     status = await sendMessage(message, banner)
