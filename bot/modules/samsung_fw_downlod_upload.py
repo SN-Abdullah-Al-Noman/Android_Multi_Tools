@@ -111,7 +111,7 @@ async def samsung_fw_download_upload(client, message):
     CSC = args[1]
     IMEI = args[2]
 
-    banner = f"<b>Samsung FW Extractor By Al Noman</b>\n"
+    banner = f"<b>Samsung FW Downloader By Al Noman</b>\n"
     status = await send_message(message, banner)
 
     banner = f"{banner}\n<b>Fetching Latest Firmware.</b>"
