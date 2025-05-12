@@ -175,14 +175,14 @@ async def samsung_fw_download_upload(client, message):
     drive_service = build('drive', 'v3', credentials=credentials)
     drive_folder_id = await create_drive_folder(drive_service, version, DRIVE_FOLDER_ID)
 
-    banner = f"{banner}\n<b>Step 8:</b> Uploading all files to Google Drive."
+    banner = f"{banner}\nUploading firmwar to Google Drive."
     await edit_message(status, banner)
     for file_name in os.listdir(DOWNLOAD_DIR):
         if file_name.endswith('.zip'):
             file_path = os.path.join(DOWNLOAD_DIR, file_name)
             await upload_in_drive(file_path, drive_folder_id)
 
-    banner = f"{banner}\n\n<b>Upload Completed.</b>\nFolder link: https://drive.google.com/drive/folders/{drive_folder_id}"
+    banner = f"{banner}\n\n<b>Upload Completed.</b>\nFirmware link: https://drive.google.com/drive/folders/{drive_folder_id}"
     await edit_message(status, banner)
     subprocess.run("rm -rf *", shell=True, cwd=DOWNLOAD_DIR)
 
