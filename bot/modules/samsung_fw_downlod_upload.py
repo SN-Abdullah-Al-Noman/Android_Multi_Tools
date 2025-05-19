@@ -104,7 +104,7 @@ def run_command(command):
 async def samsung_fw_download_upload(client, message):
     args = message.text.split()[1:]
     if len(args) != 3:
-        await send_message(message, f"<b>Usage:</b> /fw MODEL CSC IMEI")
+        await send_message(message, f"<b>Usage:</b> /sfwdu MODEL CSC IMEI")
         return
 
     MODEL = args[0]
@@ -175,7 +175,7 @@ async def samsung_fw_download_upload(client, message):
     drive_service = build('drive', 'v3', credentials=credentials)
     drive_folder_id = await create_drive_folder(drive_service, version, DRIVE_FOLDER_ID)
 
-    banner = f"{banner}\nUploading firmwar to Google Drive."
+    banner = f"{banner}\nUploading firmware to Google Drive."
     await edit_message(status, banner)
     for file_name in os.listdir(DOWNLOAD_DIR):
         if file_name.endswith('.zip'):
