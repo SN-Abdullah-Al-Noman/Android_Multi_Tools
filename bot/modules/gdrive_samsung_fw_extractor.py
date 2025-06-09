@@ -197,7 +197,7 @@ async def samsung_fw_extract(client, message):
     await editMessage(status, banner)
     try:
         # subprocess.run('rm -rf optics.img prism.img odm.img product.img system.img system_dlkm.img vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
-        subprocess.run('rm -rf boot.img optics.img prism.img system_dlkm.img vendor.img vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
+        # subprocess.run('rm -rf boot.img optics.img prism.img system_dlkm.img vendor.img vendor_dlkm.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('for i in *.img; do 7z a -mx9 "${i%.*}.img.xz" "$i"; done && rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
