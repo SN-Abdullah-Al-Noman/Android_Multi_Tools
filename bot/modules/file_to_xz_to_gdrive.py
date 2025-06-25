@@ -117,7 +117,7 @@ async def samsung_fw_download_upload(client, message):
     banner = f"{banner}\nDownloading file."
     await edit_message(status, banner)
     try:
-        subprocess.run(['wget', '-O', f'{FILE_NAME}', '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0"', f'{LINK}'], cwd=DOWNLOAD_DIR)
+        subprocess.run(['wget', '-O', f'{FILE_NAME}', f'{LINK}'], cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\nFailed: {e}."
         await editMessage(status, banner)
