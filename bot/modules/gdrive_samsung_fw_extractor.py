@@ -187,7 +187,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 5:</b> Extracting all partitions from super.img"
     await editMessage(status, banner)
     try:
-        subprocess.run('lpunpack super.img && rm -rf super.img', shell=True, cwd=DOWNLOAD_DIR)
+        # subprocess.run('lpunpack super.img && rm -rf super.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
         await editMessage(status, banner)
@@ -196,7 +196,7 @@ async def samsung_fw_extract(client, message):
     banner = f"\n{banner}\n<b>Step 6:</b> Compressing all img to xz level 9."
     await editMessage(status, banner)
     try:
-        subprocess.run('rm -rf boot.img prism.img system.img system_ext.img vendor.img', shell=True, cwd=DOWNLOAD_DIR)
+        # subprocess.run('rm -rf boot.img prism.img system.img system_ext.img vendor.img', shell=True, cwd=DOWNLOAD_DIR)
         subprocess.run('for i in *.img; do 7z a -mx9 "${i%.*}.img.xz" "$i"; done && rm -rf *.img', shell=True, cwd=DOWNLOAD_DIR)
     except Exception as e:
         banner = f"\n{banner}\n{e}."
